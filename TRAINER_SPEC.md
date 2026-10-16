@@ -271,4 +271,4 @@ grc-trainers/
 
 ---
 
-*Spec generated 2026-10-16T16:33Z · spec build `GRCT-20261016-1633Z` (provisional prefix) · modeled on `dfir-trainers` reference build `HUNT-20261015-2250Z`.*
+*Spec generated 2026-10-16T17:13Z · spec build `GRCT-20261016-1713Z` (provisional prefix) · modeled on `dfir-trainers` reference build `HUNT-20261015-2250Z`.*

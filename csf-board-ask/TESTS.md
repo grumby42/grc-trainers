@@ -241,6 +241,6 @@ legal.
 
 ---
 
-*Generated 2026-10-16T16:33Z · build `GRCT-20261016-1633Z`. Objective labels are
+*Generated 2026-10-16T17:13Z · build `GRCT-20261016-1713Z`. Objective labels are
 verbatim from NIST SP 800-53A Rev 5.2.0 (OSCAL, CC0). OSCAL status values were
 verified against the OSCAL assessment-common metaschema.*

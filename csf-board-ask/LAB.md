@@ -76,4 +76,4 @@ preferred ATT&CK techniques that CTID doesn't map.
 
 ---
 
-*Generated 2026-10-16T16:33Z · build `GRCT-20261016-1633Z`.*
+*Generated 2026-10-16T17:13Z · build `GRCT-20261016-1713Z`.*

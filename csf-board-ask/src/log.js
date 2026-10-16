@@ -79,6 +79,10 @@ function renderAbout() {
     <tr><td>CTID Mappings Explorer — 800-53 Rev 5 ↔ ATT&amp;CK ${esc(p.ctid_attack_version)} enterprise (last update ${esc(p.ctid_last_update)})</td><td>mappings-explorer ${esc(p.ctid_commit)}</td><td>${esc(p.ctid_license)}</td></tr>
     <tr><td>GAO Yellow Book glossary definitions (quoted)</td><td>gaoinnovations.gov glossary</td><td>U.S. Government work, not subject to U.S. copyright</td></tr>
   </table>
+  <h3>MITRE ATT&amp;CK® notice</h3>
+  <p style="font-size:12.5px">"© 2026 The MITRE Corporation. This work is reproduced and distributed with the permission of The MITRE Corporation."</p>
+  <p style="font-size:12.5px">The MITRE Corporation (MITRE) hereby grants you a non-exclusive, royalty-free license to use ATT&amp;CK® for research, development, and commercial purposes. Any copy you make for such purposes is authorized provided that you reproduce MITRE's copyright designation and this license in any such copy.</p>
+  <p style="font-size:12px;color:var(--muted)">MITRE ATT&amp;CK and ATT&amp;CK are registered trademarks of The MITRE Corporation. ATT&amp;CK is provided "AS IS"; see MITRE's <a href="https://attack.mitre.org/resources/legal-and-branding/terms-of-use/" target="_blank" rel="noopener">Terms of Use</a> for the full disclaimers (also reproduced in THIRD_PARTY_NOTICES.md).</p>
   <h3>What is <i>not</i> verified here</h3>
   <ul style="font-size:13.5px">
     <li><b>CSF 2.0 ↔ 800-53 pairings</b> are trainer selections. NIST's official mapping (OLIR #186) wasn't reachable from the build environment. Verify each pairing at <a href="https://csrc.nist.gov/projects/olir/informative-reference-catalog/details?referenceId=186#/" target="_blank" rel="noopener">OLIR #186</a>.</li>

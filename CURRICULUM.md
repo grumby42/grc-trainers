@@ -236,4 +236,4 @@ that were checked were low quality, so don't use them as seeds.
 
 ---
 
-*Curriculum generated 2026-10-16T16:33Z · spec build `GRCT-20261016-1633Z` (provisional prefix).*
+*Curriculum generated 2026-10-16T17:13Z · spec build `GRCT-20261016-1713Z` (provisional prefix).*

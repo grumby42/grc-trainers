@@ -4,7 +4,7 @@
 intake → scope → request list → document review → interview → test and sample →
 supplier review → findings → risk → POA&M → board report.*
 
-**Build:** `GRCT-20261016-1633Z` (provisional prefix) · **STAMP_UTC:** `2026-10-16T16:33Z`
+**Build:** `GRCT-20261016-1713Z` (provisional prefix) · **STAMP_UTC:** `2026-10-16T17:13Z`
 
 ---
 
@@ -113,4 +113,4 @@ The full research crosswalk is in [`../CURRICULUM.md`](../CURRICULUM.md). The bu
 
 ---
 
-*README generated 2026-10-16T16:33Z · build `GRCT-20261016-1633Z`.*
+*README generated 2026-10-16T17:13Z · build `GRCT-20261016-1713Z`.*
