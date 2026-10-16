@@ -1,0 +1,1333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GRC Engagement Trainer — CSF 2.0 Board Ask</title>
+<style>
+  :root{
+    /* workpaper palette — same family as the DFIR trainers: charcoal, bone ink, one brass accent */
+    --bg:#191a1c;--panel:#232528;--panel2:#1d1f21;--ink:#e8e3d7;--muted:#a19a8a;--faint:#6f6a5e;
+    --line:#2d2c2a;--line2:#3c3a36;--accent:#c89b3c;--accent2:#8c96a8;--warn:#cf9f52;--bad:#b45a5d;
+    --good:#7f9d6a;--purple:#9c86b8;--chip:#26272a;--evid:#111215;--evidink:#cbc4b2;--winbar:#1b1d20;
+    --lead:#1f2228;--own:#16191f;--ownln:#33405a;--ownink:#cdd7ea;--thr:#211617;--thrln:#4d2f30;--thrink:#e7cbc9;
+    --sans:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --mono:"SF Mono",SFMono-Regular,ui-monospace,"Cascadia Code",Consolas,Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background-color:var(--bg);background-image:linear-gradient(rgba(255,255,255,.016) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.016) 1px,transparent 1px);background-size:32px 32px;color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent2)}
+  code,.mono{font-family:var(--mono)}
+  .wrap{max-width:1200px;margin:0 auto;padding:16px 16px 90px}
+  header.top{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;border-bottom:1px solid var(--line);padding-bottom:12px;margin-bottom:12px}
+  header.top h1{font-size:18px;margin:0;letter-spacing:.3px}
+  header.top .sub{color:var(--muted);font-size:12.5px}
+  .badge{font-size:10.5px;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);border:1px solid var(--line2);border-radius:999px;padding:3px 10px;background:var(--chip)}
+  .modebar{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .modebtn{background:var(--panel2);border:1px solid var(--line2);color:var(--muted);border-radius:9px;padding:8px 14px;cursor:pointer;font-size:13px;font-weight:600}
+  .modebtn.on{background:var(--chip);color:var(--ink);border-color:var(--accent)}
+
+  .viewtoggle{display:inline-flex;flex-wrap:wrap;border:1px solid var(--line2);border-radius:9px;overflow:hidden;margin-bottom:12px}
+  .viewtoggle button{background:var(--panel2);border:none;color:var(--muted);padding:7px 13px;cursor:pointer;font-size:12.5px;font-weight:700}
+  .viewtoggle button.on{background:var(--chip);color:var(--ink)}
+  .viewtoggle button.on.own{background:#162033;color:#9fb7e6}
+  .viewtoggle button.on.thr{background:var(--thr);color:#ff9f9a}
+
+  .fwstrip{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:14px}
+  @media(max-width:900px){.fwstrip{grid-template-columns:repeat(3,1fr)}}
+  @media(max-width:520px){.fwstrip{grid-template-columns:repeat(2,1fr)}}
+  .fw{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;min-width:0}
+  .fw .k{font-size:9.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--faint)}
+  .fw .v{font-size:12.5px;font-weight:600;margin-top:2px;overflow-wrap:anywhere}
+  .fw.changed{border-color:var(--accent)}
+  .pips{display:flex;gap:3px;margin-top:5px}.pips i{flex:1;height:5px;border-radius:2px;background:#2c2b29}.pips i.on{background:var(--accent)}.pips i.cur{background:var(--warn)}
+
+  .layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:16px}
+  @media(max-width:980px){.layout{grid-template-columns:minmax(0,1fr)}}
+  .progress{height:5px;background:var(--panel);border-radius:999px;overflow:hidden;margin:2px 0 12px}
+  .progress>i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width .35s}
+  .phase{font-size:10.5px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .phase .cism{color:var(--purple);margin-left:8px}
+  h2.title{margin:3px 0 4px;font-size:19px}
+
+  .lead{display:flex;gap:10px;align-items:flex-start;background:var(--lead);border:1px solid #3a3f4a;border-radius:12px;padding:11px 13px;margin:12px 0}
+  .lead .ava{flex:0 0 34px;width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#c89b3c,#8c96a8);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:12px;color:#141414}
+  .lead .who{font-size:11px;color:#c9c1ad;font-weight:700;margin-bottom:2px}.lead .who .role{color:var(--faint);font-weight:500}
+  .lead .msg{font-size:13.5px}
+  .lead .tag{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--warn);border:1px solid #5a4a22;border-radius:5px;padding:1px 6px;margin-left:6px}
+
+  .newconcept{border:1px solid #33314a;background:#1a1726;border-radius:10px;padding:10px 12px;margin:10px 0}
+  .newconcept .lbl{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--purple);font-weight:700}
+  .scene{margin:10px 0}.scene p{margin:8px 0}.scene strong{color:#fff}
+
+  .prov{display:inline-block;font-size:9.5px;letter-spacing:.5px;text-transform:uppercase;border-radius:4px;padding:0 5px;margin-left:6px;vertical-align:1px;font-weight:700;border:1px solid}
+  .prov.fw{color:#9fc29a;border-color:#3d5a39}.prov.oc{color:#c9b27a;border-color:#5a4a22}.prov.inf{color:#b9a6d9;border-color:#4a3d63}.prov.syn{color:#9aa4b8;border-color:#3a4252}
+
+  .workspace{display:grid;gap:12px;margin:14px 0}
+  .win{background:var(--evid);border:1px solid var(--line2);border-radius:10px;overflow:hidden}
+  .win .bar{display:flex;align-items:center;gap:8px;background:var(--winbar);border-bottom:1px solid var(--line);padding:7px 11px;flex-wrap:wrap}
+  .win .bar .app{font-size:11px;color:var(--muted);letter-spacing:.4px;text-transform:uppercase}.win .bar .app b{color:var(--accent2)}
+  .win pre{margin:0;padding:11px 13px;overflow-x:auto;font-size:12px;color:var(--evidink);line-height:1.5;font-family:var(--mono);white-space:pre}
+  .win pre .c{color:#7a7466}.win pre .hi{color:var(--warn);font-weight:600}.win pre .r{color:var(--bad);font-weight:600}.win pre .g{color:var(--good)}.win pre .b{color:var(--accent2)}
+
+  .reason{border:1px solid var(--line2);border-radius:12px;overflow:hidden;margin:14px 0;background:var(--panel2)}
+  .reason .rh{background:#151617;padding:8px 12px;font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line)}
+  .reason .rb{padding:4px 12px 12px}
+  .rrow{padding:10px 0;border-bottom:1px dashed #33312d}.rrow:last-child{border-bottom:none}
+  .rrow .lbl{font-size:10px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;margin-bottom:3px}
+  .lbl.cri{color:var(--accent2)}.lbl.src{color:var(--purple)}.lbl.suf{color:var(--warn)}.lbl.ali{color:var(--accent)}
+  .rrow .txt{font-size:13px}
+  .verdict{display:inline-block;font-size:10.5px;font-weight:700;border-radius:5px;padding:1px 7px;margin-left:6px;vertical-align:middle;border:1px solid}
+  .verdict.ok{color:var(--good);border-color:#3d5a39;background:#1a2418}.verdict.more{color:var(--warn);border-color:#5a4a22;background:#262012}.verdict.bad{color:var(--bad);border-color:#5a2a2c;background:#251516}.verdict.na{color:var(--muted);border-color:var(--line2)}
+
+  .nist{border:1px solid #2f3a2d;background:#141813;border-radius:10px;margin:10px 0;overflow:hidden}
+  .nist summary{cursor:pointer;padding:8px 12px;font-size:12px;color:#b8cfb3;list-style:none}
+  .nist summary::-webkit-details-marker{display:none}
+  .nist summary::before{content:"▸ ";color:var(--good)}.nist[open] summary::before{content:"▾ "}
+  .nist .nb{padding:4px 12px 12px;font-size:12.5px}
+  .nist .stmt{margin:3px 0}.nist .obj{margin:3px 0;padding-left:8px;border-left:2px solid #2f3a2d}
+  .nist .ol{font-family:var(--mono);font-size:11px;color:var(--good);margin-right:6px}
+  .nist .mh{font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);margin:10px 0 3px}
+  .nist ul{margin:2px 0;padding-left:18px}.nist li{margin:1px 0}
+  .nist .hl{background:#2a2614;outline:1px solid #5a4a22;border-radius:3px}
+
+  .ownpanel{border:1px solid var(--ownln);border-radius:12px;overflow:hidden;margin:14px 0;background:var(--own)}
+  .ownpanel .ah{background:#18202c;padding:8px 12px;font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:#9fb7e6;border-bottom:1px solid var(--ownln)}
+  .thrpanel{border:1px solid var(--thrln);border-radius:12px;overflow:hidden;margin:14px 0;background:#170d0e}
+  .thrpanel .ah{background:#20100f;padding:8px 12px;font-size:11px;letter-spacing:.7px;text-transform:uppercase;color:#ff9f9a;border-bottom:1px solid var(--thrln)}
+  .ab{padding:4px 12px 12px}
+  .arow{padding:9px 0;border-bottom:1px dashed #2c3340}.arow:last-child{border-bottom:none}
+  .thrpanel .arow{border-bottom-color:#3a2020}
+  .arow .lbl{font-size:10px;letter-spacing:.8px;text-transform:uppercase;font-weight:700;margin-bottom:3px;color:#9fb7e6}
+  .thrpanel .arow .lbl{color:#ff8f8a}
+  .arow .txt{font-size:13px;color:var(--ownink)}.thrpanel .arow .txt{color:var(--thrink)}
+  .tech{font-family:var(--mono);font-size:11.5px;color:#ffb4ae}
+
+  .bias{border-left:3px solid var(--purple);background:#1b1722;padding:9px 13px;border-radius:0 8px 8px 0;margin:13px 0}
+  .bias h4{margin:0 0 5px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#c3b0e0}
+  .bias p{margin:3px 0;font-size:13px}.bias .ct{color:#b7d4ae}
+
+  .gate{border:1px solid #4a3d63;background:#181522;border-radius:10px;padding:11px 13px;margin:13px 0}
+  .gate h4{margin:0 0 6px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:#c3b0e0}
+  .gate table{width:100%;border-collapse:collapse;font-size:12.5px}.gate td,.gate th{border-bottom:1px solid #2c2838;padding:5px 6px;text-align:left;vertical-align:top}
+  .gate th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .gate .w{color:var(--good);font-weight:700}
+
+  .decision{border:1px solid #2e3a2c;background:#141a13;border-radius:10px;padding:13px;margin:14px 0}
+  .decision .q{font-weight:600;margin-bottom:9px}
+  .opt{display:block;width:100%;text-align:left;background:var(--panel2);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:10px 12px;margin:6px 0;cursor:pointer;font-size:13.5px;font-family:inherit}
+  .opt:hover{border-color:var(--accent)}.opt.correct{border-color:var(--good);background:#1a2418}.opt.wrong{border-color:var(--bad);background:#251516}
+  .opt .mk{float:right;font-weight:700}
+  .fb{display:none;margin-top:9px;padding:10px 12px;border-radius:8px;font-size:13px}.fb.show{display:block}.fb.ok{background:#1a2418;border:1px solid #3d5a39}.fb.no{background:#251516;border:1px solid #5a2a2c}
+  .take{border-left:3px solid var(--accent);background:#1e1b14;padding:9px 13px;border-radius:0 8px 8px 0;margin:13px 0}.take h4{margin:0 0 5px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}.take p{margin:3px 0;font-size:13.5px}
+  .refs{font-size:12px;color:var(--muted);margin:12px 0 2px}.refs a{text-decoration:none}.refs a:hover{text-decoration:underline}
+  .nav{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:16px}
+  .btn{background:var(--accent);color:#1b1608;border:none;border-radius:9px;padding:11px 18px;font-weight:700;cursor:pointer;font-size:14px;font-family:inherit}
+  .btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line2);font-weight:600}.btn:disabled{opacity:.4;cursor:not-allowed}
+  .btn.sm{padding:7px 12px;font-size:12.5px}
+
+  .rail .box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:13px;margin-bottom:12px}
+  .rail h3{margin:0 0 9px;font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted)}
+  .prof{width:100%;border-collapse:collapse;font-size:11.5px}.prof td{padding:4px 3px;border-bottom:1px solid var(--line);vertical-align:top}
+  .prof .id{font-family:var(--mono);color:var(--accent2);white-space:nowrap}
+  .st{font-size:10px;font-weight:700;border-radius:4px;padding:0 5px;border:1px solid;white-space:nowrap}
+  .st.u{color:var(--faint);border-color:var(--line2)}.st.p{color:var(--warn);border-color:#5a4a22}.st.g{color:var(--bad);border-color:#5a2a2c}.st.m{color:var(--good);border-color:#3d5a39}
+  .qs{list-style:none;margin:0;padding:0;font-size:12px}.qs li{display:flex;gap:7px;padding:3px 0}.qs li.closed{color:var(--faint);text-decoration:line-through}
+  .cismbar{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;font-size:10.5px;text-align:center}
+  .cismbar div{border:1px solid var(--line2);border-radius:6px;padding:4px 2px;color:var(--faint)}.cismbar div.on{border-color:var(--purple);color:#c3b0e0}
+  .legend{font-size:11.5px;color:var(--muted)}.legend div{margin:3px 0}
+  .stamp{font-family:var(--mono);font-size:10.5px;color:var(--faint);overflow-wrap:anywhere}
+
+  /* exercises */
+  .exhead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+  select,input,textarea{background:var(--panel2);color:var(--ink);border:1px solid var(--line2);border-radius:8px;padding:8px 10px;font-family:inherit;font-size:13px;max-width:100%}
+  textarea{width:100%;min-height:70px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px}
+  .score{font-family:var(--mono);color:var(--accent)}
+  /* log */
+  .formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+  @media(max-width:720px){.formgrid{grid-template-columns:minmax(0,1fr)}}
+  .formgrid label{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted);display:block;margin-bottom:3px}
+  .formgrid .full{grid-column:1/-1}
+  .formgrid input,.formgrid select{width:100%}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px}.tbl th,.tbl td{border-bottom:1px solid var(--line);padding:6px;text-align:left;vertical-align:top}
+  .tbl th{font-size:10px;text-transform:uppercase;letter-spacing:.6px;color:var(--muted)}
+  .tblwrap{overflow-x:auto}
+  .emptyrow{color:var(--faint);font-size:13px;padding:10px 0}
+  .hidden{display:none!important}
+  table.mini{border-collapse:collapse;font-size:12.5px;margin:8px 0;width:100%}table.mini td,table.mini th{border:1px solid var(--line2);padding:5px 7px;text-align:left;vertical-align:top}table.mini th{background:#1c1d1f;font-size:11px;color:var(--muted)}
+  .kbd{font-family:var(--mono);font-size:11px;border:1px solid var(--line2);border-radius:4px;padding:0 5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>GRC Engagement Trainer</h1>
+    <span class="badge">CSF 2.0 · Board ask</span>
+    <span class="sub">Scope → interview → test → find → remediate → report. Real NIST text, synthetic organization.</span>
+  </header>
+
+  <div class="modebar">
+    <button class="modebtn on" data-mode="walk">1 · Engagement walkthrough</button>
+    <button class="modebtn" data-mode="ex">2 · Exercise generator</button>
+    <button class="modebtn" data-mode="log">3 · Workpaper log</button>
+    <button class="modebtn" data-mode="about">About &amp; sources</button>
+  </div>
+
+  <!-- WALKTHROUGH -->
+  <section id="walkMode">
+    <div class="viewtoggle" id="viewToggle">
+      <button class="on" data-view="assessor">Assessor view</button>
+      <button class="own" data-view="owner">Control Owner view</button>
+      <button class="thr" data-view="threat">Threat lens</button>
+    </div>
+    <div class="fwstrip" id="fwstrip"></div>
+    <div class="layout">
+      <main>
+        <div class="progress"><i id="prog"></i></div>
+        <div class="phase" id="phase"></div>
+        <h2 class="title" id="title"></h2>
+        <div id="body"></div>
+        <div class="nav">
+          <button class="btn ghost" id="prev">← Back</button>
+          <span class="stamp" id="stepNo"></span>
+          <button class="btn" id="next">Next →</button>
+        </div>
+      </main>
+      <aside class="rail">
+        <div class="box"><h3>Current Profile — this engagement</h3><table class="prof" id="profTbl"></table></div>
+        <div class="box"><h3>Open questions</h3><ul class="qs" id="qs"></ul></div>
+        <div class="box"><h3>CISM domains touched <span style="text-transform:none;letter-spacing:0">(2026-11-03 outline)</span></h3><div class="cismbar" id="cismbar"></div></div>
+        <div class="box legend"><h3>Provenance labels</h3>
+          <div><span class="prov fw">framework text</span> from NIST / GAO (public domain) — verbatim in NIST panels and quotes</div>
+          <div><span class="prov oc">outline / course</span> from a cert outline, course, or practitioner source — cite-only</div>
+          <div><span class="prov inf">inference</span> practitioner judgment; not a rule</div>
+          <div><span class="prov syn">synthetic</span> invented for training — org, people, evidence</div>
+        </div>
+        <div class="box"><h3>Build</h3><div class="stamp" id="stampBox"></div></div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- EXERCISES -->
+  <section id="exMode" class="hidden">
+    <div class="exhead">
+      <select id="exType"></select>
+      <button class="btn sm" id="exNew">New rep</button>
+      <span class="score" id="exScore"></span>
+    </div>
+    <div id="exHost"></div>
+  </section>
+
+  <!-- WORKPAPER LOG -->
+  <section id="logMode" class="hidden">
+    <div class="card">
+      <p style="margin-top:0;font-size:13px;color:var(--muted)">One row per control tested. Fixed schema so two assessors' workpapers stay comparable. Field names for the risk/remediation half follow NIST's OSCAL POA&amp;M model (risk statement, likelihood/impact, status, remediation type, milestones). Nothing leaves this page except the file you export.</p>
+      <div class="formgrid" id="logForm"></div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px">
+        <button class="btn sm" id="logAdd">Add row</button>
+        <button class="btn sm ghost" id="logExample">Load walkthrough example</button>
+        <button class="btn sm ghost" id="logJson">Export JSON</button>
+        <button class="btn sm ghost" id="logTsv">Export TSV</button>
+        <button class="btn sm ghost" id="logClear">Clear</button>
+      </div>
+    </div>
+    <div class="card tblwrap" id="logTableHost"></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="aboutMode" class="hidden"><div class="card" id="aboutHost"></div></section>
+</div>
+
+<script>
+const BUILD_ID="GRCT-20261016-1633Z (provisional prefix)";
+const STAMP_UTC="2026-10-16T16:33Z";
+const DATA={"provenance": {"oscal_content_commit": "78650f0 2026-05-13", "csf_catalog": "Electronic Version of NIST Cybersecurity Framework 2.0 v1.2.0", "sp80053_catalog": "Electronic (OSCAL) Version of NIST SP 800-53 Rev 5.2.0 Controls and SP 800-53A Rev 5.2.0 Assessment Procedures v5.2.0", "oscal_license": "CC0 1.0 Universal / US Government work (public domain)", "ctid_commit": "a85e55a 2026-10-04", "ctid_file": "mappings/nist_800_53/attack-16.1/nist_800_53-rev5/enterprise/nist_800_53-rev5_attack-16.1-enterprise.json", "ctid_attack_version": "16.1", "ctid_last_update": "04/16/2025", "ctid_license": "Apache-2.0 (c) MITRE"}, "csf": {"GV.OC-03": {"id": "GV.OC-03", "text": "Legal, regulatory, and contractual requirements regarding cybersecurity - including privacy and civil liberties obligations - are understood and managed", "examples": ["Determine a process to track and manage legal and regulatory requirements regarding protection of individuals' information (e.g., Health Insurance Portability and Accountability Act, California Consumer Privacy Act, General Data Protection Regulation)", "Determine a process to track and manage contractual requirements for cybersecurity management of supplier, customer, and partner information", "Align the organization's cybersecurity strategy with legal, regulatory, and contractual requirements"]}, "GV.RM-01": {"id": "GV.RM-01", "text": "Risk management objectives are established and agreed to by organizational stakeholders", "examples": ["Update near-term and long-term cybersecurity risk management objectives as part of annual strategic planning and when major changes occur", "Establish measurable objectives for cybersecurity risk management (e.g., manage the quality of user training, ensure adequate risk protection for industrial control systems)", "Senior leaders agree about cybersecurity objectives and use them for measuring and managing risk and performance"]}, "GV.RM-02": {"id": "GV.RM-02", "text": "Risk appetite and risk tolerance statements are established, communicated, and maintained", "examples": ["Determine and communicate risk appetite statements that convey expectations about the appropriate level of risk for the organization", "Translate risk appetite statements into specific, measurable, and broadly understandable risk tolerance statements", "Refine organizational objectives and risk appetite periodically based on known risk exposure and residual risk"]}, "GV.PO-02": {"id": "GV.PO-02", "text": "Policy for managing cybersecurity risks is reviewed, updated, communicated, and enforced to reflect changes in requirements, threats, technology, and organizational mission", "examples": ["Update policy based on periodic reviews of cybersecurity risk management results to ensure that policy and supporting processes and procedures adequately maintain risk at an acceptable level", "Provide a timeline for reviewing changes to the organization's risk environment (e.g., changes in risk or in the organization's mission objectives), and communicate recommended policy updates", "Update policy to reflect changes in legal and regulatory requirements", "Update policy to reflect changes in technology (e.g., adoption of artificial intelligence) and changes to the business (e.g., acquisition of a new business, new contract requirements)"]}, "GV.SC-07": {"id": "GV.SC-07", "text": "The risks posed by a supplier, their products and services, and other third parties are understood, recorded, prioritized, assessed, responded to, and monitored over the course of the relationship", "examples": ["Adjust assessment formats and frequencies based on the third party's reputation and the criticality of the products or services they provide", "Evaluate third parties' evidence of compliance with contractual cybersecurity requirements, such as self-attestations, warranties, certifications, and other artifacts", "Monitor critical suppliers to ensure that they are fulfilling their security obligations throughout the supplier relationship lifecycle using a variety of methods and techniques, such as inspections, audits, tests, or other forms of evaluation", "Monitor critical suppliers, services, and products for changes to their risk profiles, and reevaluate supplier criticality and risk impact accordingly", "Plan for unexpected supplier and supply chain-related interruptions to ensure business continuity"]}, "GV.OV-01": {"id": "GV.OV-01", "text": "Cybersecurity risk management strategy outcomes are reviewed to inform and adjust strategy and direction", "examples": ["Measure how well the risk management strategy and risk results have helped leaders make decisions and achieve organizational objectives", "Examine whether cybersecurity risk strategies that impede operations or innovation should be adjusted"]}, "ID.AM-01": {"id": "ID.AM-01", "text": "Inventories of hardware managed by the organization are maintained", "examples": ["Maintain inventories for all types of hardware, including IT, IoT, OT, and mobile devices", "Constantly monitor networks to detect new hardware and automatically update inventories"]}, "ID.RA-01": {"id": "ID.RA-01", "text": "Vulnerabilities in assets are identified, validated, and recorded", "examples": ["Use vulnerability management technologies to identify unpatched and misconfigured software", "Assess network and system architectures for design and implementation weaknesses that affect cybersecurity", "Review, analyze, or test organization-developed software to identify design, coding, and default configuration vulnerabilities", "Assess facilities that house critical computing assets for physical vulnerabilities and resilience issues", "Monitor sources of cyber threat intelligence for information on new vulnerabilities in products and services", "Review processes and procedures for weaknesses that could be exploited to affect cybersecurity"]}, "ID.IM-01": {"id": "ID.IM-01", "text": "Improvements are identified from evaluations", "examples": ["Perform self-assessments of critical services that take current threats and TTPs into consideration", "Invest in third-party assessments or independent audits of the effectiveness of the organization's cybersecurity program to identify areas that need improvement", "Constantly evaluate compliance with selected cybersecurity requirements through automated means"]}, "PR.AA-05": {"id": "PR.AA-05", "text": "Access permissions, entitlements, and authorizations are defined in a policy, managed, enforced, and reviewed, and incorporate the principles of least privilege and separation of duties", "examples": ["Review logical and physical access privileges periodically and whenever someone changes roles or leaves the organization, and promptly rescind privileges that are no longer needed", "Take attributes of the requester and the requested resource into account for authorization decisions (e.g., geolocation, day/time, requester endpoint's cyber health)", "Restrict access and privileges to the minimum necessary (e.g., zero trust architecture)", "Periodically review the privileges associated with critical business functions to confirm proper separation of duties"]}}, "sp80053": {"ac-1": {"id": "AC-01", "title": "Policy and Procedures", "statement": [{"label": "a.", "text": "Develop, document, and disseminate to [Assignment: organization-defined personnel or roles]:", "depth": 1}, {"label": "1.", "text": "[Selection (one or more): organization-level; mission/business process-level; system-level] access control policy that:", "depth": 2}, {"label": "(a)", "text": "Addresses purpose, scope, roles, responsibilities, management commitment, coordination among organizational entities, and compliance; and", "depth": 3}, {"label": "(b)", "text": "Is consistent with applicable laws, executive orders, directives, regulations, policies, standards, and guidelines; and", "depth": 3}, {"label": "2.", "text": "Procedures to facilitate the implementation of the access control policy and the associated access controls;", "depth": 2}, {"label": "b.", "text": "Designate an [Assignment: organization-defined official] to manage the development, documentation, and dissemination of the access control policy and procedures; and", "depth": 1}, {"label": "c.", "text": "Review and update the current access control:", "depth": 1}, {"label": "1.", "text": "Policy [Assignment: organization-defined frequency] and following [Assignment: organization-defined events] ; and", "depth": 2}, {"label": "2.", "text": "Procedures [Assignment: organization-defined frequency] and following [Assignment: organization-defined events].", "depth": 2}], "objectives": [{"label": "AC-01a.[01]", "text": "an access control policy is developed and documented;", "depth": 2}, {"label": "AC-01a.[02]", "text": "the access control policy is disseminated to [Assignment: organization-defined personnel or roles];", "depth": 2}, {"label": "AC-01a.[03]", "text": "access control procedures to facilitate the implementation of the access control policy and associated controls are developed and documented;", "depth": 2}, {"label": "AC-01a.[04]", "text": "the access control procedures are disseminated to [Assignment: organization-defined personnel or roles];", "depth": 2}, {"label": "AC-01a.01(a)[01]", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy addresses purpose;", "depth": 4}, {"label": "AC-01a.01(a)[02]", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy addresses scope;", "depth": 4}, {"label": "AC-01a.01(a)[03]", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy addresses roles;", "depth": 4}, {"label": "AC-01a.01(a)[04]", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy addresses responsibilities;", "depth": 4}, {"label": "AC-01a.01(a)[05]", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy addresses management commitment;", "depth": 4}, {"label": "AC-01a.01(a)[06]", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy addresses coordination among organizational entities;", "depth": 4}, {"label": "AC-01a.01(a)[07]", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy addresses compliance;", "depth": 4}, {"label": "AC-01a.01(b)", "text": "the [Selection (one or more): organization-level; mission/business process-level; system-level] access control policy is consistent with applicable laws, Executive Orders, directives, regulations, policies, standards, and guidelines;", "depth": 3}, {"label": "AC-01b.", "text": "the [Assignment: organization-defined official] is designated to manage the development, documentation, and dissemination of the access control policy and procedures;", "depth": 1}, {"label": "AC-01c.01[01]", "text": "the current access control policy is reviewed and updated [Assignment: organization-defined frequency];", "depth": 3}, {"label": "AC-01c.01[02]", "text": "the current access control policy is reviewed and updated following [Assignment: organization-defined events];", "depth": 3}, {"label": "AC-01c.02[01]", "text": "the current access control procedures are reviewed and updated [Assignment: organization-defined frequency];", "depth": 3}, {"label": "AC-01c.02[02]", "text": "the current access control procedures are reviewed and updated following [Assignment: organization-defined events].", "depth": 3}], "methods": {"EXAMINE": ["Access control policy and procedures", "system security plan", "privacy plan", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with access control responsibilities", "organizational personnel with information security with information security and privacy responsibilities"]}, "guidance": "Access control policy and procedures address the controls in the AC family that are implemented within systems and organizations. The risk management strategy is an important factor in establishing such policies and procedures. Policies and procedures contribute to security and privacy assurance. Therefore, it is important that security and privacy programs collaborate on the development of access control policy and procedures. Security and privacy program policies and procedures at the organization level are preferable, in general, and may obviate the need for mission- or system-specific policies and procedures. The policy can be included as part of the general security and privacy policy or be represented by multiple policies reflecting the complex nature of organizations. Procedures can be established for security and privacy programs, for mission or business processes, and for systems, if needed. Procedures describe how the policies or controls are implemented and can be directed at the individual or role that is the object of the procedure. Procedures can be documented in system security and privacy plans or in one or more separate documents. Events that may precipitate an update to access control policy and procedures include assessment or audit findings, security incidents or breaches, or changes in laws, executive orders, directives, regulations, policies, standards, and guidelines. Simply restating controls does not constitute an organizational policy or procedure.", "odps": [{"id": "ac-01_odp.01", "label": "personnel or roles", "guideline": "personnel or roles to whom the access control policy is to be disseminated is/are defined;"}, {"id": "ac-01_odp.02", "label": "personnel or roles", "guideline": "personnel or roles to whom the access control procedures are to be disseminated is/are defined;"}, {"id": "ac-01_odp.03", "label": "", "guideline": ""}, {"id": "ac-01_odp.04", "label": "official", "guideline": "an official to manage the access control policy and procedures is defined;"}, {"id": "ac-01_odp.05", "label": "frequency", "guideline": "the frequency at which the current access control policy is reviewed and updated is defined;"}, {"id": "ac-01_odp.06", "label": "events", "guideline": "events that would require the current access control policy to be reviewed and updated are defined;"}, {"id": "ac-01_odp.07", "label": "frequency", "guideline": "the frequency at which the current access control procedures are reviewed and updated is defined;"}, {"id": "ac-01_odp.08", "label": "events", "guideline": "events that would require procedures to be reviewed and updated are defined;"}]}, "ac-2": {"id": "AC-02", "title": "Account Management", "statement": [{"label": "a.", "text": "Define and document the types of accounts allowed and specifically prohibited for use within the system;", "depth": 1}, {"label": "b.", "text": "Assign account managers;", "depth": 1}, {"label": "c.", "text": "Require [Assignment: organization-defined prerequisites and criteria] for group and role membership;", "depth": 1}, {"label": "d.", "text": "Specify:", "depth": 1}, {"label": "1.", "text": "Authorized users of the system;", "depth": 2}, {"label": "2.", "text": "Group and role membership; and", "depth": 2}, {"label": "3.", "text": "Access authorizations (i.e., privileges) and [Assignment: organization-defined attributes (as required)] for each account;", "depth": 2}, {"label": "e.", "text": "Require approvals by [Assignment: organization-defined personnel or roles] for requests to create accounts;", "depth": 1}, {"label": "f.", "text": "Create, enable, modify, disable, and remove accounts in accordance with [Assignment: organization-defined policy, procedures, prerequisites, and criteria];", "depth": 1}, {"label": "g.", "text": "Monitor the use of accounts;", "depth": 1}, {"label": "h.", "text": "Notify account managers and [Assignment: organization-defined personnel or roles] within:", "depth": 1}, {"label": "1.", "text": "[Assignment: organization-defined time period] when accounts are no longer required;", "depth": 2}, {"label": "2.", "text": "[Assignment: organization-defined time period] when users are terminated or transferred; and", "depth": 2}, {"label": "3.", "text": "[Assignment: organization-defined time period] when system usage or need-to-know changes for an individual;", "depth": 2}, {"label": "i.", "text": "Authorize access to the system based on:", "depth": 1}, {"label": "1.", "text": "A valid access authorization;", "depth": 2}, {"label": "2.", "text": "Intended system usage; and", "depth": 2}, {"label": "3.", "text": "[Assignment: organization-defined attributes (as required)];", "depth": 2}, {"label": "j.", "text": "Review accounts for compliance with account management requirements [Assignment: organization-defined frequency];", "depth": 1}, {"label": "k.", "text": "Establish and implement a process for changing shared or group account authenticators (if deployed) when individuals are removed from the group; and", "depth": 1}, {"label": "l.", "text": "Align account management processes with personnel termination and transfer processes.", "depth": 1}], "objectives": [{"label": "AC-02a.[01]", "text": "account types allowed for use within the system are defined and documented;", "depth": 2}, {"label": "AC-02a.[02]", "text": "account types specifically prohibited for use within the system are defined and documented;", "depth": 2}, {"label": "AC-02b.", "text": "account managers are assigned;", "depth": 1}, {"label": "AC-02c.", "text": "[Assignment: organization-defined prerequisites and criteria] for group and role membership are required;", "depth": 1}, {"label": "AC-02d.01", "text": "authorized users of the system are specified;", "depth": 2}, {"label": "AC-02d.02", "text": "group and role membership are specified;", "depth": 2}, {"label": "AC-02d.03[01]", "text": "access authorizations (i.e., privileges) are specified for each account;", "depth": 3}, {"label": "AC-02d.03[02]", "text": "[Assignment: organization-defined attributes (as required)] are specified for each account;", "depth": 3}, {"label": "AC-02e.", "text": "approvals are required by [Assignment: organization-defined personnel or roles] for requests to create accounts;", "depth": 1}, {"label": "AC-02f.[01]", "text": "accounts are created in accordance with [Assignment: organization-defined policy, procedures, prerequisites, and criteria];", "depth": 2}, {"label": "AC-02f.[02]", "text": "accounts are enabled in accordance with [Assignment: organization-defined policy, procedures, prerequisites, and criteria];", "depth": 2}, {"label": "AC-02f.[03]", "text": "accounts are modified in accordance with [Assignment: organization-defined policy, procedures, prerequisites, and criteria];", "depth": 2}, {"label": "AC-02f.[04]", "text": "accounts are disabled in accordance with [Assignment: organization-defined policy, procedures, prerequisites, and criteria];", "depth": 2}, {"label": "AC-02f.[05]", "text": "accounts are removed in accordance with [Assignment: organization-defined policy, procedures, prerequisites, and criteria];", "depth": 2}, {"label": "AC-02g.", "text": "the use of accounts is monitored;", "depth": 1}, {"label": "AC-02h.01", "text": "account managers and [Assignment: organization-defined personnel or roles] are notified within [Assignment: organization-defined time period] when accounts are no longer required;", "depth": 2}, {"label": "AC-02h.02", "text": "account managers and [Assignment: organization-defined personnel or roles] are notified within [Assignment: organization-defined time period] when users are terminated or transferred;", "depth": 2}, {"label": "AC-02h.03", "text": "account managers and [Assignment: organization-defined personnel or roles] are notified within [Assignment: organization-defined time period] when system usage or the need to know changes for an individual;", "depth": 2}, {"label": "AC-02i.01", "text": "access to the system is authorized based on a valid access authorization;", "depth": 2}, {"label": "AC-02i.02", "text": "access to the system is authorized based on intended system usage;", "depth": 2}, {"label": "AC-02i.03", "text": "access to the system is authorized based on [Assignment: organization-defined attributes (as required)];", "depth": 2}, {"label": "AC-02j.", "text": "accounts are reviewed for compliance with account management requirements [Assignment: organization-defined frequency];", "depth": 1}, {"label": "AC-02k.[01]", "text": "a process is established for changing shared or group account authenticators (if deployed) when individuals are removed from the group;", "depth": 2}, {"label": "AC-02k.[02]", "text": "a process is implemented for changing shared or group account authenticators (if deployed) when individuals are removed from the group;", "depth": 2}, {"label": "AC-02l.[01]", "text": "account management processes are aligned with personnel termination processes;", "depth": 2}, {"label": "AC-02l.[02]", "text": "account management processes are aligned with personnel transfer processes.", "depth": 2}], "methods": {"EXAMINE": ["Access control policy", "personnel termination policy and procedure", "personnel transfer policy and procedure", "procedures for addressing account management", "system design documentation", "system configuration settings and associated documentation", "list of active system accounts along with the name of the individual associated with each account", "list of recently disabled system accounts and the name of the individual associated with each account", "list of conditions for group and role membership", "notifications of recent transfers, separations, or terminations of employees", "access authorization records", "account management compliance reviews", "system monitoring records", "system audit records", "system security plan", "privacy plan", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with account management responsibilities", "system/network administrators", "organizational personnel with information security with information security and privacy responsibilities"], "TEST": ["Organizational processes for account management on the system", "mechanisms for implementing account management"]}, "guidance": "Examples of system account types include individual, shared, group, system, guest, anonymous, emergency, developer, temporary, and service. Identification of authorized system users and the specification of access privileges reflect the requirements in other controls in the security plan. Users requiring administrative privileges on system accounts receive additional scrutiny by organizational personnel responsible for approving such accounts and privileged access, including system owner, mission or business owner, senior agency information security officer, or senior agency official for privacy. Types of accounts that organizations may wish to prohibit due to increased risk include shared, group, emergency, anonymous, temporary, and guest accounts.\n\nWhere access involves personally identifiable information, security programs collaborate with the senior agency official for privacy to establish the specific conditions for group and role membership; specify authorized users, group and role membership, and access authorizations for each account; and create, adjust, or remove system accounts in accordance with organizational policies. Policies can include such information as account expiration dates or other factors that trigger the disabling of accounts. Organizations may choose to define access privileges or other attributes by account, type of account, or a combination of the two. Examples of other attributes required for authorizing access include restrictions on time of day, day of week, and point of origin. In defining other system account attributes, organizations consider system-related requirements and mission/business requirements. Failure to consider these factors could affect system availability.\n\nTemporary and emergency accounts are intended for short-term use. Organizations establish temporary accounts as part of normal account activation procedures when there is a need for short-term accounts without the demand for immediacy in account activation. Organizations establish emergency accounts in response to crisis situations and with the need for rapid account activation. Therefore, emergency account activation may bypass normal account authorization processes. Emergency and temporary accounts are not to be confused with infrequently used accounts, including local logon accounts used for special tasks or when network resources are unavailable (may also be known as accounts of last resort). Such accounts remain available and are not subject to automatic disabling or removal dates. Conditions for disabling or deactivating accounts include when shared/group, emergency, or temporary accounts are no longer required and when individuals are transferred or terminated. Changing shared/group authenticators when members leave the group is intended to ensure that former group members do not retain access to the shared or group account. Some types of system accounts may require specialized training.", "odps": [{"id": "ac-02_odp.01", "label": "prerequisites and criteria", "guideline": "prerequisites and criteria for group and role membership are defined;"}, {"id": "ac-02_odp.02", "label": "attributes (as required)", "guideline": "attributes (as required) for each account are defined;"}, {"id": "ac-02_odp.03", "label": "personnel or roles", "guideline": "personnel or roles required to approve requests to create accounts is/are defined;"}, {"id": "ac-02_odp.04", "label": "policy, procedures, prerequisites, and criteria", "guideline": "policy, procedures, prerequisites, and criteria for account creation, enabling, modification, disabling, and removal are defined;"}, {"id": "ac-02_odp.05", "label": "personnel or roles", "guideline": "personnel or roles to be notified is/are defined;"}, {"id": "ac-02_odp.06", "label": "time period", "guideline": "time period within which to notify account managers when accounts are no longer required is defined;"}, {"id": "ac-02_odp.07", "label": "time period", "guideline": "time period within which to notify account managers when users are terminated or transferred is defined; "}, {"id": "ac-02_odp.08", "label": "time period", "guideline": "time period within which to notify account managers when system usage or the need to know changes for an individual is defined;"}, {"id": "ac-02_odp.09", "label": "attributes (as required)", "guideline": "attributes needed to authorize system access (as required) are defined;"}, {"id": "ac-02_odp.10", "label": "frequency", "guideline": "the frequency of account review is defined;"}]}, "cm-8": {"id": "CM-08", "title": "System Component Inventory", "statement": [{"label": "a.", "text": "Develop and document an inventory of system components that:", "depth": 1}, {"label": "1.", "text": "Accurately reflects the system;", "depth": 2}, {"label": "2.", "text": "Includes all components within the system;", "depth": 2}, {"label": "3.", "text": "Does not include duplicate accounting of components or components assigned to any other system;", "depth": 2}, {"label": "4.", "text": "Is at the level of granularity deemed necessary for tracking and reporting; and", "depth": 2}, {"label": "5.", "text": "Includes the following information to achieve system component accountability: [Assignment: organization-defined information] ; and", "depth": 2}, {"label": "b.", "text": "Review and update the system component inventory [Assignment: organization-defined frequency].", "depth": 1}], "objectives": [{"label": "CM-08a.01", "text": "an inventory of system components that accurately reflects the system is developed and documented;", "depth": 2}, {"label": "CM-08a.02", "text": "an inventory of system components that includes all components within the system is developed and documented;", "depth": 2}, {"label": "CM-08a.03", "text": "an inventory of system components that does not include duplicate accounting of components or components assigned to any other system is developed and documented;", "depth": 2}, {"label": "CM-08a.04", "text": "an inventory of system components that is at the level of granularity deemed necessary for tracking and reporting is developed and documented;", "depth": 2}, {"label": "CM-08a.05", "text": "an inventory of system components that includes [Assignment: organization-defined information] is developed and documented;", "depth": 2}, {"label": "CM-08b.", "text": "the system component inventory is reviewed and updated [Assignment: organization-defined frequency].", "depth": 1}], "methods": {"EXAMINE": ["Configuration management policy", "procedures addressing system component inventory", "configuration management plan", "system security plan", "system design documentation", "system component inventory", "inventory reviews and update records", "system security plan", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with component inventory management responsibilities", "organizational personnel with information security responsibilities", "system/network administrators"], "TEST": ["Organizational processes for managing the system component inventory", "mechanisms supporting and/or implementing system component inventory"]}, "guidance": "System components are discrete, identifiable information technology assets that include hardware, software, and firmware. Organizations may choose to implement centralized system component inventories that include components from all organizational systems. In such situations, organizations ensure that the inventories include system-specific information required for component accountability. The information necessary for effective accountability of system components includes the system name, software owners, software version numbers, hardware inventory specifications, software license information, and for networked components, the machine names and network addresses across all implemented protocols (e.g., IPv4, IPv6). Inventory specifications include date of receipt, cost, model, serial number, manufacturer, supplier information, component type, and physical location.\n\nPreventing duplicate accounting of system components addresses the lack of accountability that occurs when component ownership and system association is not known, especially in large or complex connected systems. Effective prevention of duplicate accounting of system components necessitates use of a unique identifier for each component. For software inventory, centrally managed software that is accessed via other systems is addressed as a component of the system on which it is installed and managed. Software installed on multiple organizational systems and managed at the system level is addressed for each individual system and may appear more than once in a centralized component inventory, necessitating a system association for each software instance in the centralized inventory to avoid duplicate accounting of components. Scanning systems implementing multiple network protocols (e.g., IPv4 and IPv6) can result in duplicate components being identified in different address spaces. The implementation of [CM-8(7)](#cm-8.7) can help to eliminate duplicate accounting of components.", "odps": [{"id": "cm-08_odp.01", "label": "information", "guideline": "information deemed necessary to achieve effective system component accountability is defined;"}, {"id": "cm-08_odp.02", "label": "frequency", "guideline": "frequency at which to review and update the system component inventory is defined;"}]}, "ra-5": {"id": "RA-05", "title": "Vulnerability Monitoring and Scanning", "statement": [{"label": "a.", "text": "Monitor and scan for vulnerabilities in the system and hosted applications [Assignment: organization-defined frequency and/or randomly in accordance with organization-defined process] and when new vulnerabilities potentially affecting the system are identified and reported;", "depth": 1}, {"label": "b.", "text": "Employ vulnerability monitoring tools and techniques that facilitate interoperability among tools and automate parts of the vulnerability management process by using standards for:", "depth": 1}, {"label": "1.", "text": "Enumerating platforms, software flaws, and improper configurations;", "depth": 2}, {"label": "2.", "text": "Formatting checklists and test procedures; and", "depth": 2}, {"label": "3.", "text": "Measuring vulnerability impact;", "depth": 2}, {"label": "c.", "text": "Analyze vulnerability scan reports and results from vulnerability monitoring;", "depth": 1}, {"label": "d.", "text": "Remediate legitimate vulnerabilities [Assignment: organization-defined response times] in accordance with an organizational assessment of risk;", "depth": 1}, {"label": "e.", "text": "Share information obtained from the vulnerability monitoring process and control assessments with [Assignment: organization-defined personnel or roles] to help eliminate similar vulnerabilities in other systems; and", "depth": 1}, {"label": "f.", "text": "Employ vulnerability monitoring tools that include the capability to readily update the vulnerabilities to be scanned.", "depth": 1}], "objectives": [{"label": "RA-05a.[01]", "text": "systems and hosted applications are monitored for vulnerabilities [Assignment: organization-defined frequency and/or randomly in accordance with organization-defined process] and when new vulnerabilities potentially affecting the system are identified and reported;", "depth": 2}, {"label": "RA-05a.[02]", "text": "systems and hosted applications are scanned for vulnerabilities [Assignment: organization-defined frequency and/or randomly in accordance with organization-defined process] and when new vulnerabilities potentially affecting the system are identified and reported;", "depth": 2}, {"label": "RA-05b.", "text": "vulnerability monitoring tools and techniques are employed to facilitate interoperability among tools;", "depth": 1}, {"label": "RA-05b.01", "text": "vulnerability monitoring tools and techniques are employed to automate parts of the vulnerability management process by using standards for enumerating platforms, software flaws, and improper configurations;", "depth": 2}, {"label": "RA-05b.02", "text": "vulnerability monitoring tools and techniques are employed to facilitate interoperability among tools and to automate parts of the vulnerability management process by using standards for formatting checklists and test procedures;", "depth": 2}, {"label": "RA-05b.03", "text": "vulnerability monitoring tools and techniques are employed to facilitate interoperability among tools and to automate parts of the vulnerability management process by using standards for measuring vulnerability impact;", "depth": 2}, {"label": "RA-05c.", "text": "vulnerability scan reports and results from vulnerability monitoring are analyzed;", "depth": 1}, {"label": "RA-05d.", "text": "legitimate vulnerabilities are remediated [Assignment: organization-defined response times] in accordance with an organizational assessment of risk;", "depth": 1}, {"label": "RA-05e.", "text": "information obtained from the vulnerability monitoring process and control assessments is shared with [Assignment: organization-defined personnel or roles] to help eliminate similar vulnerabilities in other systems;", "depth": 1}, {"label": "RA-05f.", "text": "vulnerability monitoring tools that include the capability to readily update the vulnerabilities to be scanned are employed.", "depth": 1}], "methods": {"EXAMINE": ["Risk assessment policy", "procedures addressing vulnerability scanning", "risk assessment", "assessment report", "vulnerability scanning tools and associated configuration documentation", "vulnerability scanning results", "patch and vulnerability management records", "system security plan", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with risk assessment, control assessment, and vulnerability scanning responsibilities", "organizational personnel with vulnerability scan analysis responsibilities", "organizational personnel with vulnerability remediation responsibilities", "organizational personnel with security responsibilities", "system/network administrators"], "TEST": ["Organizational processes for vulnerability scanning, analysis, remediation, and information sharing", "mechanisms supporting and/or implementing vulnerability scanning, analysis, remediation, and information sharing"]}, "guidance": "Security categorization of information and systems guides the frequency and comprehensiveness of vulnerability monitoring (including scans). Organizations determine the required vulnerability monitoring for system components, ensuring that the potential sources of vulnerabilities—such as infrastructure components (e.g., switches, routers, guards, sensors), networked printers, scanners, and copiers—are not overlooked. The capability to readily update vulnerability monitoring tools as new vulnerabilities are discovered and announced and as new scanning methods are developed helps to ensure that new vulnerabilities are not missed by employed vulnerability monitoring tools. The vulnerability monitoring tool update process helps to ensure that potential vulnerabilities in the system are identified and addressed as quickly as possible. Vulnerability monitoring and analyses for custom software may require additional approaches, such as static analysis, dynamic analysis, binary analysis, or a hybrid of the three approaches. Organizations can use these analysis approaches in source code reviews and in a variety of tools, including web-based application scanners, static analysis tools, and binary analyzers.\n\nVulnerability monitoring includes scanning for patch levels; scanning for functions, ports, protocols, and services that should not be accessible to users or devices; and scanning for flow control mechanisms that are improperly configured or operating incorrectly. Vulnerability monitoring may also include continuous vulnerability monitoring tools that use instrumentation to continuously analyze components. Instrumentation-based tools may improve accuracy and may be run throughout an organization without scanning. Vulnerability monitoring tools that facilitate interoperability include tools that are Security Content Automated Protocol (SCAP)-validated. Thus, organizations consider using scanning tools that express vulnerabilities in the Common Vulnerabilities and Exposures (CVE) naming convention and that employ the Open Vulnerability Assessment Language (OVAL) to determine the presence of vulnerabilities. Sources for vulnerability information include the Common Weakness Enumeration (CWE) listing and the National Vulnerability Database (NVD). Control assessments, such as red team exercises, provide additional sources of potential vulnerabilities for which to scan. Organizations also consider using scanning tools that express vulnerability impact by the Common Vulnerability Scoring System (CVSS).\n\nVulnerability monitoring includes a channel and process for receiving reports of security vulnerabilities from the public at-large. Vulnerability disclosure programs can be as simple as publishing a monitored email address or web form that can receive reports, including notification authorizing good-faith research and disclosure of security vulnerabilities. Organizations generally expect that such research is happening with or without their authorization and can use public vulnerability disclosure channels to increase the likelihood that discovered vulnerabilities are reported directly to the organization for remediation.\n\nOrganizations may also employ the use of financial incentives (also known as \"bug bounties\" ) to further encourage external security researchers to report discovered vulnerabilities. Bug bounty programs can be tailored to the organization’s needs. Bounties can be operated indefinitely or over a defined period of time and can be offered to the general public or to a curated group. Organizations may run public and private bounties simultaneously and could choose to offer partially credentialed access to certain participants in order to evaluate security vulnerabilities from privileged vantage points.", "odps": [{"id": "ra-05_odp.01", "label": "frequency and/or randomly in accordance with organization-defined process", "guideline": "frequency for monitoring systems and hosted applications for vulnerabilities is defined;"}, {"id": "ra-05_odp.02", "label": "frequency and/or randomly in accordance with organization-defined process", "guideline": "frequency for scanning systems and hosted applications for vulnerabilities is defined;"}, {"id": "ra-05_odp.03", "label": "response times", "guideline": "response times to remediate legitimate vulnerabilities in accordance with an organizational assessment of risk are defined;"}, {"id": "ra-05_odp.04", "label": "personnel or roles", "guideline": "personnel or roles with whom information obtained from the vulnerability scanning process and control assessments is to be shared;"}]}, "sr-6": {"id": "SR-06", "title": "Supplier Assessments and Reviews", "statement": [{"label": "", "text": "Assess and review the supply chain-related risks associated with suppliers or contractors and the system, system component, or system service they provide [Assignment: organization-defined frequency].", "depth": 0}], "objectives": [{"label": "SR-06", "text": "the supply chain-related risks associated with suppliers or contractors and the systems, system components, or system services they provide are assessed and reviewed [Assignment: organization-defined frequency].", "depth": 0}], "methods": {"EXAMINE": ["Supply chain risk management policy and procedures", "supply chain risk management strategy", "supply chain risk management plan", "system and services acquisition policy", "procedures addressing supply chain protection", "procedures addressing the integration of information security requirements into the acquisition process", "records of supplier due diligence reviews", "system security plan", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with system and services acquisition responsibilities", "organizational personnel with information security responsibilities", "organizational personnel with supply chain protection responsibilities"], "TEST": ["Organizational processes for conducting supplier reviews", "mechanisms supporting and/or implementing supplier reviews"]}, "guidance": "An assessment and review of supplier risk includes security and supply chain risk management processes, foreign ownership, control or influence (FOCI), and the ability of the supplier to effectively assess subordinate second-tier and third-tier suppliers and contractors. The reviews may be conducted by the organization or by an independent third party. The reviews consider documented processes, documented controls, all-source intelligence, and publicly available information related to the supplier or contractor. Organizations can use open-source information to monitor for indications of stolen information, poor development and quality control practices, information spillage, or counterfeits. In some cases, it may be appropriate or required to share assessment and review results with other organizations in accordance with any applicable rules, policies, or inter-organizational agreements or contracts.", "odps": [{"id": "sr-06_odp", "label": "frequency", "guideline": "the frequency at which to assess and review the supply chain-related risks associated with suppliers or contractors and the systems, system components, or system services they provide is defined;"}]}, "ca-5": {"id": "CA-05", "title": "Plan of Action and Milestones", "statement": [{"label": "a.", "text": "Develop a plan of action and milestones for the system to document the planned remediation actions of the organization to correct weaknesses or deficiencies noted during the assessment of the controls and to reduce or eliminate known vulnerabilities in the system; and", "depth": 1}, {"label": "b.", "text": "Update existing plan of action and milestones [Assignment: organization-defined frequency] based on the findings from control assessments, independent audits or reviews, and continuous monitoring activities.", "depth": 1}], "objectives": [{"label": "CA-05a.", "text": "a plan of action and milestones for the system is developed to document the planned remediation actions of the organization to correct weaknesses or deficiencies noted during the assessment of the controls and to reduce or eliminate known vulnerabilities in the system;", "depth": 1}, {"label": "CA-05b.", "text": "existing plan of action and milestones are updated [Assignment: organization-defined frequency] based on the findings from control assessments, independent audits or reviews, and continuous monitoring activities.", "depth": 1}], "methods": {"EXAMINE": ["Assessment, authorization, and monitoring policy", "procedures addressing plan of action and milestones", "control assessment plan", "control assessment report", "control assessment evidence", "plan of action and milestones", "system security plan", "privacy plan", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with plan of action and milestones development and implementation responsibilities", "organizational personnel with information security and privacy responsibilities"], "TEST": ["Mechanisms for developing, implementing, and maintaining plan of action and milestones"]}, "guidance": "Plans of action and milestones are useful for any type of organization to track planned remedial actions. Plans of action and milestones are required in authorization packages and subject to federal reporting requirements established by OMB.", "odps": [{"id": "ca-05_odp", "label": "frequency", "guideline": "the frequency at which to update an existing plan of action and milestones based on the findings from control assessments, independent audits or reviews, and continuous monitoring activities is defined;"}]}, "ca-7": {"id": "CA-07", "title": "Continuous Monitoring", "statement": [{"label": "", "text": "Develop a system-level continuous monitoring strategy and implement continuous monitoring in accordance with the organization-level continuous monitoring strategy that includes:", "depth": 0}, {"label": "a.", "text": "Establishing the following system-level metrics to be monitored: [Assignment: organization-defined system-level metrics];", "depth": 1}, {"label": "b.", "text": "Establishing [Assignment: organization-defined frequencies] for monitoring and [Assignment: organization-defined frequencies] for assessment of control effectiveness;", "depth": 1}, {"label": "c.", "text": "Ongoing control assessments in accordance with the continuous monitoring strategy;", "depth": 1}, {"label": "d.", "text": "Ongoing monitoring of system and organization-defined metrics in accordance with the continuous monitoring strategy;", "depth": 1}, {"label": "e.", "text": "Correlation and analysis of information generated by control assessments and monitoring;", "depth": 1}, {"label": "f.", "text": "Response actions to address results of the analysis of control assessment and monitoring information; and", "depth": 1}, {"label": "g.", "text": "Reporting the security and privacy status of the system to [Assignment: organization-defined personnel or roles] [Assignment: organization-defined frequency].", "depth": 1}], "objectives": [{"label": "CA-07[01]", "text": "a system-level continuous monitoring strategy is developed;", "depth": 1}, {"label": "CA-07[02]", "text": "system-level continuous monitoring is implemented in accordance with the organization-level continuous monitoring strategy;", "depth": 1}, {"label": "CA-07a.", "text": "system-level continuous monitoring includes establishment of the following system-level metrics to be monitored: [Assignment: organization-defined system-level metrics];", "depth": 1}, {"label": "CA-07b.[01]", "text": "system-level continuous monitoring includes established [Assignment: organization-defined frequencies] for monitoring;", "depth": 2}, {"label": "CA-07b.[02]", "text": "system-level continuous monitoring includes established [Assignment: organization-defined frequencies] for assessment of control effectiveness;", "depth": 2}, {"label": "CA-07c.", "text": "system-level continuous monitoring includes ongoing control assessments in accordance with the continuous monitoring strategy;", "depth": 1}, {"label": "CA-07d.", "text": "system-level continuous monitoring includes ongoing monitoring of system and organization-defined metrics in accordance with the continuous monitoring strategy;", "depth": 1}, {"label": "CA-07e.", "text": "system-level continuous monitoring includes correlation and analysis of information generated by control assessments and monitoring;", "depth": 1}, {"label": "CA-07f.", "text": "system-level continuous monitoring includes response actions to address the results of the analysis of control assessment and monitoring information;", "depth": 1}, {"label": "CA-07g.[01]", "text": "system-level continuous monitoring includes reporting the security status of the system to [Assignment: organization-defined personnel or roles] [Assignment: organization-defined frequency];", "depth": 2}, {"label": "CA-07g.[02]", "text": "system-level continuous monitoring includes reporting the privacy status of the system to [Assignment: organization-defined personnel or roles] [Assignment: organization-defined frequency].", "depth": 2}], "methods": {"EXAMINE": ["Assessment, authorization, and monitoring policy", "organizational continuous monitoring strategy", "system-level continuous monitoring strategy", "procedures addressing continuous monitoring of system controls", "procedures addressing configuration management", "control assessment report", "plan of action and milestones", "system monitoring records", "configuration management records", "impact analyses", "status reports", "system security plan", "privacy plan", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with continuous monitoring responsibilities", "organizational personnel with information security and privacy responsibilities", "system/network administrators"], "TEST": ["Mechanisms implementing continuous monitoring", "mechanisms supporting response actions to address assessment and monitoring results", "mechanisms supporting security and privacy status reporting"]}, "guidance": "Continuous monitoring at the system level facilitates ongoing awareness of the system security and privacy posture to support organizational risk management decisions. The terms \"continuous\" and \"ongoing\" imply that organizations assess and monitor their controls and risks at a frequency sufficient to support risk-based decisions. Different types of controls may require different monitoring frequencies. The results of continuous monitoring generate risk response actions by organizations. When monitoring the effectiveness of multiple controls that have been grouped into capabilities, a root-cause analysis may be needed to determine the specific control that has failed. Continuous monitoring programs allow organizations to maintain the authorizations of systems and common controls in highly dynamic environments of operation with changing mission and business needs, threats, vulnerabilities, and technologies. Having access to security and privacy information on a continuing basis through reports and dashboards gives organizational officials the ability to make effective and timely risk management decisions, including ongoing authorization decisions.\n\nAutomation supports more frequent updates to hardware, software, and firmware inventories, authorization packages, and other system information. Effectiveness is further enhanced when continuous monitoring outputs are formatted to provide information that is specific, measurable, actionable, relevant, and timely. Continuous monitoring activities are scaled in accordance with the security categories of systems. Monitoring requirements, including the need for specific monitoring, may be referenced in other controls and control enhancements, such as [AC-2g](#ac-2_smt.g), [AC-2(7)](#ac-2.7), [AC-2(12)(a)](#ac-2.12_smt.a), [AC-2(7)(b)](#ac-2.7_smt.b), [AC-2(7)(c)](#ac-2.7_smt.c), [AC-17(1)](#ac-17.1), [AT-4a](#at-4_smt.a), [AU-13](#au-13), [AU-13(1)](#au-13.1), [AU-13(2)](#au-13.2), [CM-3f](#cm-3_smt.f), [CM-6d](#cm-6_smt.d), [CM-11c](#cm-11_smt.c), [IR-5](#ir-5), [MA-2b](#ma-2_smt.b), [MA-3a](#ma-3_smt.a), [MA-4a](#ma-4_smt.a), [PE-3d](#pe-3_smt.d), [PE-6](#pe-6), [PE-14b](#pe-14_smt.b), [PE-16](#pe-16), [PE-20](#pe-20), [PM-6](#pm-6), [PM-23](#pm-23), [PM-31](#pm-31), [PS-7e](#ps-7_smt.e), [SA-9c](#sa-9_smt.c), [SR-4](#sr-4), [SC-5(3)(b)](#sc-5.3_smt.b), [SC-7a](#sc-7_smt.a), [SC-7(24)(b)](#sc-7.24_smt.b), [SC-18b](#sc-18_smt.b), [SC-43b](#sc-43_smt.b) , and [SI-4](#si-4).", "odps": [{"id": "ca-07_odp.01", "label": "system-level metrics", "guideline": "system-level metrics to be monitored are defined;"}, {"id": "ca-07_odp.02", "label": "frequencies", "guideline": "frequencies at which to monitor control effectiveness are defined;"}, {"id": "ca-07_odp.03", "label": "frequencies", "guideline": "frequencies at which to assess control effectiveness are defined;"}, {"id": "ca-07_odp.04", "label": "personnel or roles", "guideline": "personnel or roles to whom the security status of the system is reported are defined;"}, {"id": "ca-07_odp.05", "label": "frequency", "guideline": "frequency at which the security status of the system is reported is defined;"}, {"id": "ca-07_odp.06", "label": "personnel or roles", "guideline": "personnel or roles to whom the privacy status of the system is reported are defined;"}, {"id": "ca-07_odp.07", "label": "frequency", "guideline": "frequency at which the privacy status of the system is reported is defined;"}]}, "pm-9": {"id": "PM-09", "title": "Risk Management Strategy", "statement": [{"label": "a.", "text": "Develops a comprehensive strategy to manage:", "depth": 1}, {"label": "1.", "text": "Security risk to organizational operations and assets, individuals, other organizations, and the Nation associated with the operation and use of organizational systems; and", "depth": 2}, {"label": "2.", "text": "Privacy risk to individuals resulting from the authorized processing of personally identifiable information;", "depth": 2}, {"label": "b.", "text": "Implement the risk management strategy consistently across the organization; and", "depth": 1}, {"label": "c.", "text": "Review and update the risk management strategy [Assignment: organization-defined frequency] or as required, to address organizational changes.", "depth": 1}], "objectives": [{"label": "PM-09a.01", "text": "a comprehensive strategy is developed to manage security risk to organizational operations and assets, individuals, other organizations, and the Nation associated with the operation and use of organizational systems;", "depth": 2}, {"label": "PM-09a.02", "text": "a comprehensive strategy is developed to manage privacy risk to individuals resulting from the authorized processing of personally identifiable information;", "depth": 2}, {"label": "PM-09b.", "text": "the risk management strategy is implemented consistently across the organization;", "depth": 1}, {"label": "PM-09c.", "text": "the risk management strategy is reviewed and updated [Assignment: organization-defined frequency] or as required to address organizational changes.", "depth": 1}], "methods": {"EXAMINE": ["Information security program plan", "privacy program plan", "risk management strategy", "supply chain risk management strategy", "procedures addressing the development, implementation, review, and update of the risk management strategy", "risk assessment results relevant to the risk management strategy", "other relevant documents or records"], "INTERVIEW": ["Organizational personnel with information security and privacy program planning and plan implementation responsibilities", "organizational personnel responsible for the development, implementation, review, and update of the risk management strategy", "organizational personnel with information security and privacy responsibilities"], "TEST": ["Organizational processes for the development, implementation, review, and update of the risk management strategy", "mechanisms supporting the development, implementation, review, and update of the risk management strategy"]}, "guidance": "An organization-wide risk management strategy includes an expression of the security and privacy risk tolerance for the organization, security and privacy risk mitigation strategies, acceptable risk assessment methodologies, a process for evaluating security and privacy risk across the organization with respect to the organization’s risk tolerance, and approaches for monitoring risk over time. The senior accountable official for risk management (agency head or designated official) aligns information security management processes with strategic, operational, and budgetary planning processes. The risk executive function, led by the senior accountable official for risk management, can facilitate consistent application of the risk management strategy organization-wide. The risk management strategy can be informed by security and privacy risk-related inputs from other sources, both internal and external to the organization, to ensure that the strategy is broad-based and comprehensive. The supply chain risk management strategy described in [PM-30](#pm-30) can also provide useful inputs to the organization-wide risk management strategy.", "odps": [{"id": "pm-09_odp", "label": "frequency", "guideline": "the frequency at which to review and update the risk management strategy is defined;"}]}}, "attack": {"AC-01": {"total_parent_techniques": 0, "sample": []}, "AC-02": {"total_parent_techniques": 70, "sample": [{"id": "T1078", "name": "Valid Accounts", "rationale": ""}, {"id": "T1098", "name": "Account Manipulation", "rationale": ""}, {"id": "T1136", "name": "Create Account", "rationale": ""}, {"id": "T1087", "name": "Account Discovery", "rationale": ""}, {"id": "T1110", "name": "Brute Force", "rationale": ""}, {"id": "T1003", "name": "OS Credential Dumping", "rationale": ""}]}, "CM-08": {"total_parent_techniques": 36, "sample": [{"id": "T1133", "name": "External Remote Services", "rationale": ""}, {"id": "T1190", "name": "Exploit Public-Facing Application", "rationale": ""}, {"id": "T1195", "name": "Supply Chain Compromise", "rationale": ""}, {"id": "T1072", "name": "Software Deployment Tools", "rationale": ""}, {"id": "T1046", "name": "Network Service Discovery", "rationale": ""}, {"id": "T1052", "name": "Exfiltration Over Physical Medium", "rationale": ""}]}, "RA-05": {"total_parent_techniques": 39, "sample": [{"id": "T1190", "name": "Exploit Public-Facing Application", "rationale": ""}, {"id": "T1133", "name": "External Remote Services", "rationale": ""}, {"id": "T1210", "name": "Exploitation of Remote Services", "rationale": ""}, {"id": "T1068", "name": "Exploitation for Privilege Escalation", "rationale": ""}, {"id": "T1046", "name": "Network Service Discovery", "rationale": ""}, {"id": "T1047", "name": "Windows Management Instrumentation", "rationale": ""}]}, "SR-06": {"total_parent_techniques": 0, "sample": []}, "CA-05": {"total_parent_techniques": 0, "sample": []}, "CA-07": {"total_parent_techniques": 75, "sample": [{"id": "T1078", "name": "Valid Accounts", "rationale": ""}, {"id": "T1562", "name": "Impair Defenses", "rationale": ""}, {"id": "T1567", "name": "Exfiltration Over Web Service", "rationale": ""}, {"id": "T1219", "name": "Remote Access Software", "rationale": ""}, {"id": "T1001", "name": "Data Obfuscation", "rationale": ""}, {"id": "T1003", "name": "OS Credential Dumping", "rationale": ""}]}, "PM-09": {"total_parent_techniques": 0, "sample": []}}};
+/* ===== CASE CONTENT — csf-board-ask =====
+   Everything about Tarnwick Air Cargo (people, systems, numbers, documents) is
+   SYNTHETIC. NIST and GAO text is pulled verbatim from DATA (built from OSCAL / GAO).
+   Provenance codes: fw = framework text, oc = outline/course/practitioner, inf = inference, syn = synthetic. */
+
+const LEAD = {name: "Ines Vargas", init: "IV", role: "GRC Engagement Lead"};
+const ORG = "Tarnwick Air Cargo";
+
+const LIFE = ["Intake", "Scope", "Fieldwork", "Analysis", "Remediate", "Report", "Monitor"];
+const PROFILE = ["Scope", "Gather inputs", "Current / Target", "Gap analysis + action plan", "Implement & update"];
+
+const QS = [
+  {id: "q1", t: "What decision does the board answer inform?"},
+  {id: "q2", t: "Profile scope: whole org, or IT only?"},
+  {id: "q3", t: "Who sets the Target Profile?"},
+  {id: "q4", t: "Is the access control policy current and in force?"},
+  {id: "q5", t: "Do accounts actually get disabled when people leave?"},
+  {id: "q6", t: "Is the asset inventory complete enough to be a population?"},
+  {id: "q7", t: "Is the vulnerability scanner seeing everything?"},
+  {id: "q8", t: "Is Plovertrack's assurance current and in scope?"},
+  {id: "q9", t: "What is the organization's risk appetite?"},
+  {id: "q10", t: "Who owns each fix, by when, and how is closure proven?"},
+  {id: "q11", t: "What does the board actually hear?"}
+];
+
+const PROFILE_ROWS = ["GV.OC-03", "GV.RM-01", "GV.RM-02", "GV.PO-02", "GV.SC-07", "GV.OV-01", "ID.AM-01", "ID.RA-01", "ID.IM-01", "PR.AA-05"];
+
+const REF = {
+  csf: {t: "NIST CSWP 29 — CSF 2.0", u: "https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.29.pdf"},
+  sp1301: {t: "NIST SP 1301 — CSF 2.0 Quick-Start: Organizational Profiles", u: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.1301.pdf"},
+  a53: {t: "NIST SP 800-53A Rev. 5 PDF (methods, depth, coverage; in-app objectives come from the later 5.2.0 OSCAL release)", u: "https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53Ar5.pdf"},
+  cases: {t: "NIST — Assessment cases overview (depth & coverage values)", u: "https://csrc.nist.gov/Projects/risk-management/about-rmf/assess-step/assessment-cases-overview"},
+  oscal: {t: "NIST OSCAL content (800-53 Rev 5.2.0 + 800-53A, CSF 2.0)", u: "https://github.com/usnistgov/oscal-content"},
+  gao: {t: "GAO Yellow Book glossary (criteria, condition, cause, effect; sufficiency; appropriateness)", u: "https://gaoinnovations.gov/yellowbook/glossary.html"},
+  yb: {t: "GAO-24-106786 — Government Auditing Standards, 2024 revision", u: "https://www.gao.gov/products/gao-24-106786"},
+  olir: {t: "NIST — CSF 2.0 informative references (lists 'CSFv2.0-to-SP-800-53-Rev-5-2-0', catalog referenceId 186): verify pairings here", u: "https://www.nist.gov/cyberframework/csf-20-informative-references"},
+  ir8286: {t: "NIST IR 8286 Rev. 1 — Integrating Cybersecurity and ERM", u: "https://csrc.nist.gov/pubs/ir/8286/r1/final"},
+  ctid: {t: "MITRE CTID Mappings Explorer — 800-53 Rev 5 ↔ ATT&CK", u: "https://github.com/center-for-threat-informed-defense/mappings-explorer"},
+  isacaInt: {t: "ISACA Journal — The Interview as an Audit Tool (2016 v4)", u: "https://www.isaca.org/resources/isaca-journal/issues/2016/volume-4/the-interview-as-an-audit-tool-during-an-it-audit"},
+  iiaInt: {t: "IIA — Plan for Effective Interviews (2023)", u: "https://internalauditor.theiia.org/en/articles/2023/june/plan-for-effective-interviews/"},
+  linford: {t: "Linford & Co — SOC review guidance (practitioner)", u: "https://linfordco.com/blog/soc-review-guidance-soc-1-soc-2-reports/"},
+  bridge: {t: "Linford & Co — What are bridge (gap) letters (practitioner)", u: "https://linfordco.com/blog/gap-bridge-letter/"},
+  bitsight: {t: "Bitsight — How to review a vendor's SOC 2 report (vendor guide)", u: "https://www.bitsight.com/guides/how-to-review-vendor-soc-2-report-2026"},
+  dc200: {t: "AICPA — SOC 2 Description Criteria DC 200 (free account)", u: "https://www.aicpa-cima.com/resources/download/get-description-criteria-for-your-organizations-soc-2-r-report"},
+  fedramp: {t: "FedRAMP — POA&M Template Completion Guide", u: "https://fedramp.gov/assets/resources/documents/CSP_POAM_Template_Completion_Guide.pdf"},
+  poamEx: {t: "NIST OSCAL — example POA&M (risk / remediation / milestone model)", u: "https://github.com/usnistgov/oscal-content/tree/main/examples/poam"},
+  cism: {t: "ISACA — CISM outline update effective 2026-11-03", u: "https://www.isaca.org/about-us/newsroom/press-releases/2026/isaca-updates-cism-exam-content-outline-factoring-in-todays-technologies-security-responsibilities"},
+  sec566: {t: "SANS SEC566 (uses ATT&CK to assess control effectiveness)", u: "https://www.sans.org/cyber-security-courses/implementing-auditing-security-frameworks-controls/"},
+  dfir: {t: "dfir-trainers — incident-side companion", u: "https://github.com/grumby42/dfir-trainers"}
+};
+
+/* Step schema:
+   mod, life (index), prof (index), method, depth, coverage, tier, cism[], title, lead{msg,tag},
+   scene, concept{lbl,html,prov}, evid[{app,title,pre}], nist{csf[],sp[],hl[],showMethods},
+   four{cri,src,suf,ali} each {t,prov,(v,vt)}, owner[{l,t}], threat{ctrl,note},
+   bias{name,trap,ct,prov}, gate{q,rows[[hyp,for,against,verdict]]}, dec{q,opts[{t,ok,fb}]},
+   take, refs[], fx{prof{},close[],open[]} */
+
+const S = [
+/* ---------------- S0 INTAKE ---------------- */
+{
+  mod: "M0", life: 0, prof: 0, method: "—", depth: "—", coverage: "—", tier: "not yet read", cism: [1],
+  title: "The ask lands",
+  lead: {msg: "Before you open a single framework, tell me in one sentence what this engagement is for. Not what the CEO typed. What decision is someone going to make with your answer?", tag: "intake"},
+  scene: `<p>You're a GRC consultant. <strong>${ORG}</strong> (air-cargo ground handling and freight forwarding at three regional airport sites, about 400 staff plus seasonal contractors) has engaged your firm to answer a board question. You don't operate any of their controls, which is what lets you assess them. This lands in your inbox Monday morning.</p>`,
+  evid: [{app: "Mail", title: "FW: board question", pre:
+`<span class="c">From:</span> CEO
+<span class="c">To:</span> you
+<span class="c">Subj:</span> FW: board question
+
+You're engaged — can we get an answer on this before the
+Q4 board meeting (6 weeks)?
+
+<span class="c">&gt; From: Audit &amp; Risk Committee chair</span>
+<span class="c">&gt;</span> After what happened at [peer company] last month I'd like
+<span class="c">&gt;</span> management to tell us whether we're <span class="hi">"aligned to NIST CSF 2.0"</span>
+<span class="c">&gt;</span> and what it would take to close any gaps. Budget season
+<span class="c">&gt;</span> is in January.`}],
+  concept: {lbl: "Classify the ask", prov: "inf", html: `Asks come in a few shapes: <b>assurance</b> (tell me if X is true), <b>readiness</b> (get us ready for an outside assessor), <b>a risk decision</b> (help me decide whether to accept, fund or fix something), a <b>vendor review</b>, or <b>policy</b> work. This one is worded as an assurance question ("are we aligned?"), but the trigger and the timing make it a <b>risk-and-budget decision</b>. That reading changes what you deliver: a prioritized gap list with costs and owners, not a pass or fail. Note too that CSF 2.0 gives you Profiles and Tiers to describe posture against outcomes the organization selects. It doesn't define a pass/fail test called "aligned", so part of your job is agreeing what that word will mean (S2).`},
+  nist: {csf: ["GV.OV-01", "GV.RM-01"], sp: [], hl: []},
+  four: {
+    cri: {t: "Nothing to test yet. The criteria for <i>this step</i> come from the asker: the decision (January budget) and the audience (Audit &amp; Risk Committee). CSF 2.0 itself states the oversight outcome the board is reaching for: <b>GV.OV-01</b>, strategy outcomes reviewed to adjust direction.", prov: "fw"},
+    src: {t: "The CEO and the committee chair. Ask the CEO two things: is a written answer expected, and is a budget request welcome?", prov: "inf"},
+    suf: {t: "You have enough to write the objective. You do <i>not</i> yet have enough to scope it.", v: "more", vt: "need scope", prov: "inf"},
+    ali: {t: `Objective, one sentence: <i>"Give the Audit &amp; Risk Committee a prioritized view of where ${ORG}'s cybersecurity outcomes fall short of an agreed CSF 2.0 Target Profile, with owners and costed actions, to inform the January budget."</i>`, v: "na", vt: "objective set", prov: "syn"}
+  },
+  owner: [
+    {l: "How the CEO hears it", t: "\"Can you make this go away before the board meeting?\" A yes/no answer is tempting for them. Reasonable pushback: a single word can't carry this; a one-page view with three decisions can."},
+    {l: "What they'll hand over", t: "The forwarded email. Probably no prior assessment exists. Ask anyway."}
+  ],
+  threat: {ctrl: null, note: "No control is in play yet. The peer company's incident is the <i>emotional</i> driver of the ask. Note it, and don't let it set the scope (see the bias check)."},
+  bias: {name: "Availability / recency", prov: "inf", trap: "The peer ransomware event makes ransomware controls feel like the whole question, so you're tempted to scope down to backups and EDR.", ct: "Counter: the committee asked about CSF 2.0 alignment. Write the peer event into the context, and scope from the framework and the business, not the headline."},
+  dec: {q: "What do you send the CEO today?", opts: [
+    {t: "\"Yes, we're mostly aligned. I'll confirm the details later.\"", ok: false, fb: "That is an answer with no evidence behind it, and the board will hold you to it. Never pre-commit a conclusion at intake."},
+    {t: "A two-line reply: the one-sentence objective, plus a request for 30 minutes to agree scope and who sets the target.", ok: true, fb: "Right. You've restated the decision, shown how you'll get there, and opened the scope conversation. Six weeks is enough if scope is settled this week."},
+    {t: "Download the CSF 2.0 core and start testing all 106 subcategories.", ok: false, fb: "That is effort without aim. CSF 2.0 has 106 active subcategories; six weeks of fieldwork can't evidence all of them, and the board didn't ask for that."}
+  ]},
+  take: "Every engagement starts by naming the decision the answer will inform. A one-sentence objective is your scope test for everything that follows.",
+  refs: [REF.csf, REF.cism],
+  fx: {open: ["q1", "q2", "q3"], close: ["q1"]}
+},
+/* ---------------- S1 SCOPE ---------------- */
+{
+  mod: "M1", life: 1, prof: 0, method: "Interview", depth: "basic", coverage: "—", tier: "not yet read", cism: [1, 2],
+  title: "Scope the Profile",
+  lead: {msg: "Write me a scope statement and a list of assumptions. If it isn't written down, the scope will move under you in week four.", tag: "scope"},
+  scene: `<p>In the scoping meeting the CEO says "everything." The CFO says "just IT." Operations points out that the ramp handheld scanners and the warehouse label printers are run by an outside vendor. Legal mentions that two airline customer contracts carry security clauses.</p>`,
+  concept: {lbl: "CSF 2.0 Profile, step 1", prov: "fw", html: `CSF 2.0 (CSWP 29) describes building an Organizational Profile in steps. The first is to <b>scope the Profile</b>: document the high-level facts and assumptions it rests on. Then gather inputs, create the Current and Target Profiles, analyze the gaps and build an action plan, then implement it and update the Profile. This trainer follows that cycle; watch the <i>CSF Profile step</i> meter.`},
+  evid: [{app: "Draft", title: "scope-statement-v0.2.docx (your draft)", pre:
+`<span class="b">SCOPE</span>   ${ORG} — all three sites; corporate IT, warehouse
+        systems, and <span class="hi">vendor-managed devices on our networks</span>
+<span class="b">PERIOD</span>  Evidence covering 2026-04-01 → 2026-09-30
+<span class="b">OUT</span>     Airline-owned systems at gates; customers' own portals
+<span class="b">FOCUS</span>   10 CSF 2.0 subcategories (agreed with CEO/CFO — see S2)
+<span class="b">ASSUMES</span> HR + procurement records are the system of record for
+        who should have access; legal's contract register is current
+<span class="c">— synthetic —</span>`}],
+  nist: {csf: ["GV.OC-03"], sp: [], hl: []},
+  four: {
+    cri: {t: "<b>GV.OC-03</b>: legal, regulatory and contractual requirements are understood and managed. The airline contract clauses are part of what \"aligned\" has to mean here.", prov: "fw"},
+    src: {t: "<b>Interview</b> legal (the contract register), operations (the vendor-managed estate), the CFO (budget constraints). <b>Examine</b> the contract register itself.", prov: "inf"},
+    suf: {t: "Legal produces a contract-obligations register, reviewed quarterly and owned by counsel. That's enough to show the obligations are <i>understood</i>. It isn't enough to show they're being <i>met</i>. Nobody has tested the airline security clauses against operations, and later findings may bear on them.", v: "more", vt: "understood, not tested", prov: "inf"},
+    ali: {t: "Vendor-managed devices on TAC networks go <b>in scope</b>: they're your risk even when they aren't your asset. GV.OC-03 is rated <b>partial</b>: managed on paper, and its fulfilment is out of this cycle's testing. Say so in the limits.", v: "more", vt: "partial", prov: "syn"}
+  },
+  owner: [
+    {l: "CFO's view", t: "\"Scope creep costs money.\" That's fair. Reply with a fixed list of 10 subcategories and a fixed evidence period. That gives a bounded scope with stated limits."},
+    {l: "Operations' view", t: "\"The handhelds are the vendor's problem.\" Pushback: if they sit on your network, they're inside your attack surface and inside your Profile."}
+  ],
+  threat: {ctrl: null, note: "Out-of-scope devices on in-scope networks are a classic blind spot. Hold that thought until the inventory step."},
+  bias: {name: "Scope drift (both directions)", prov: "inf", trap: "Shrinking to \"just IT\" because it's easier to evidence, or swelling to \"everything\" because the CEO said so.", ct: "Counter: tie every in-scope or out-of-scope call to the objective from S0, and write each one down with its reason."},
+  dec: {q: "The ramp handhelds are vendor-managed. In or out?", opts: [
+    {t: "Out. They aren't our assets.", ok: false, fb: "Ownership isn't the test. They connect to TAC networks and carry TAC shipment data. Excluding them hides risk from the board."},
+    {t: "In, as devices on our network. The vendor's own controls are assessed through supplier review (GV.SC-07).", ok: true, fb: "Right. In scope as connected assets, with the vendor's side handled as supplier risk. That split shows up again at S7 and S9."},
+    {t: "Defer the decision until fieldwork.", ok: false, fb: "Scope you defer gets decided by whoever is loudest in week four. Decide now, write it down, and revisit only through a documented change."}
+  ]},
+  take: "A scope statement holds three things: what's in, what's out and why, and the assumptions you're relying on. Write each assumption so you can test it later; HR records being complete turns out to matter.",
+  refs: [REF.csf, REF.sp1301],
+  fx: {prof: {"GV.OC-03": "p"}, close: ["q2"]}
+},
+/* ---------------- S2 TARGET / FRAMEWORK ---------------- */
+{
+  mod: "M2", life: 1, prof: 2, method: "—", depth: "—", coverage: "—", tier: "Target: Repeatable (3) — proposed", cism: [1, 3],
+  title: "Choose the target and the crosswalk",
+  lead: {msg: "Who decides what 'aligned' means? Not you. Get the target agreed by someone who owns the risk, or the board will argue with your gaps.", tag: "framework"},
+  scene: `<p>CSF 2.0 states <i>outcomes</i>, not controls. To test an outcome you need something testable underneath it. You choose SP 800-53 Rev 5 controls with their 800-53A assessment procedures as the "how to test" layer under each CSF outcome.</p>`,
+  concept: {lbl: "Crosswalks are many-to-many, so verify the pairings", prov: "inf", html: `NIST's CSF 2.0 informative-references page lists an official CSF 2.0 → SP 800-53 Rev 5.2.0 reference (catalog referenceId 186). <b>This trainer does not embed it.</b> The download wasn't reachable from the build environment. So every pairing you see here is labeled <span class="prov inf">inference</span> (a trainer selection) and should be checked against OLIR #186 before you rely on it at work. The CSF text and the 800-53 and 800-53A text on each step <i>are</i> verbatim from NIST's OSCAL catalog.`},
+  evid: [{app: "Sheet", title: "target-profile-v1.xlsx (agreed with CEO + CFO)", pre:
+`<span class="b">ID         Target (one line)                              800-53 test layer</span>
+GV.OC-03   obligations register owned + reviewed          (interview/examine)
+GV.RM-01   risk objectives agreed by the committee        PM-9
+GV.RM-02   written appetite + tolerance statements        PM-9
+GV.PO-02   policies reviewed on a defined cycle           AC-1 (as exemplar)
+GV.SC-07   critical suppliers assessed + monitored        SR-6
+GV.OV-01   committee reviews outcomes ≥ annually          CA-7
+ID.AM-01   one reconciled hardware inventory              CM-8
+ID.RA-01   all in-scope assets scanned                    RA-5
+ID.IM-01   findings tracked to closure                    CA-5
+PR.AA-05   access removed <span class="hi">≤1 business day</span> after      AC-2
+           end date (employees + contractors)
+<span class="b">Org-defined values agreed here</span> (become test thresholds):
+  disable window = 1 business day · CA-5 update = monthly
+  vuln response times = <span class="r">not yet defined</span> (left open)
+<span class="c">Tier read target: Repeatable (3) — proposed by management — synthetic</span>`}],
+  nist: {csf: ["GV.RM-01"], sp: [], hl: []},
+  four: {
+    cri: {t: "CSWP 29: the <b>Target Profile</b> holds the outcomes the organization has selected and prioritized. The <b>Tiers</b> (Partial, Risk Informed, Repeatable, Adaptive) describe how rigorous its risk governance and management practices are.", prov: "fw"},
+    src: {t: "The CEO and CFO, who own the risk and the budget. You <i>propose</i> the target; they <i>select</i> it.", prov: "inf"},
+    suf: {t: "A signed-off target sheet. An email that says \"sounds good\" isn't enough; you need the named approvers and the date.", v: "ok", vt: "agreed", prov: "syn"},
+    ali: {t: "Ten outcomes, each with a one-line target and a named 800-53 test layer. Proposed tier read: <b>Repeatable (3)</b>. Where a control has an <code>[Assignment: organization-defined …]</code> value you'll test against (the disable window, for example), management sets it <i>now</i>. You don't invent it at fieldwork. Values left undefined become findings.", v: "na", vt: "target set", prov: "syn"}
+  },
+  owner: [{l: "Executive view", t: "\"Just use the full framework.\" Pushback: a target means a <i>selection</i> of outcomes, with priorities. All 106 subcategories at once isn't a target, it's a backlog."}],
+  threat: {ctrl: null, note: "Which outcomes went into the target is itself a risk decision. If nothing in it touches detection (DE), say so in the report."},
+  bias: {name: "Copy-paste targets", prov: "inf", trap: "Taking a generic \"best practice\" profile as the target because it looks authoritative.", ct: "Counter: CSF 2.0 says the organization selects and prioritizes outcomes. Ask what <i>this</i> business needs, then cite the source of each target line."},
+  dec: {q: "Management wants Tier 4 (Adaptive) \"because we should aim high.\" You…", opts: [
+    {t: "Accept it. Ambition is good.", ok: false, fb: "A target the organization can't fund makes every gap look like failure, and it isn't a decision anyone can make in January."},
+    {t: "Recommend Repeatable (3) for now, record Adaptive as a stated long-term direction, and let the owners decide.", ok: true, fb: "Right. You advise and they select. The tier names come from CSWP 29; the choice is a business judgment, and it's labeled that way."},
+    {t: "Set the tier yourself. You're the expert.", ok: false, fb: "If the assessor picks the target and then measures against it, the gaps lose credibility. Keep the roles separate."}
+  ]},
+  take: "Know what is NIST's text and what is your pairing of it. The outcome and the control text are verbatim from NIST; the line connecting them is your choice, so check it against OLIR.",
+  refs: [REF.csf, REF.olir, REF.oscal],
+  fx: {close: ["q3"], open: ["q4", "q5", "q6", "q7", "q8", "q9"]}
+},
+/* ---------------- S3 REQUEST LIST ---------------- */
+{
+  mod: "M3", life: 2, prof: 1, method: "Examine (planned)", depth: "—", coverage: "—", tier: "Target: Repeatable (3)", cism: [3],
+  title: "Build the request list from NIST's assessment objects",
+  lead: {msg: "Every line on your request list should trace to an objective. If you can't say which objective a document answers, don't ask for it.", tag: "request list"},
+  scene: `<p>800-53A doesn't leave "where do I look" to guesswork. Every procedure lists <b>assessment objects</b> for each method: the documents to <i>examine</i>, the roles to <i>interview</i>, and the mechanisms to <i>test</i>. The NIST panel below is open on this step. Read the AC-2 object lists at the bottom. That's your request list, almost word for word. (On later steps the panel starts collapsed. Click it to open.)</p>`,
+  concept: {lbl: "Three methods, applied to assessment objects", prov: "fw", html: `NIST 800-53A has three assessment methods. <b>Examine</b>: specifications, mechanisms, activities. <b>Interview</b>: individuals or groups. <b>Test</b>: mechanisms and activities. Each is applied with a <b>depth</b> (basic, focused, comprehensive) and a <b>coverage</b> (basic sample, focused sample, sufficiently large sample).`},
+  evid: [{app: "Sheet", title: "request-list-v1 (PBC: prepared by client)", pre:
+`<span class="b">#   Request                                        Traces to</span>
+R01 Access control policy + procedures —          AC-01a.[01], AC-01c.01[01]
+    controlled copies from the policy repository
+R02 Personnel termination + transfer procedures    AC-02l.[01], AC-02l.[02]
+R03 Active accounts w/ associated individual (AD)  AC-02d.01
+R04 Recently disabled accounts + disable dates     AC-02f.[04]
+R05 HR separations 2026-04-01→09-30 (full pop.)    AC-02l.[01] <span class="hi">← you pull, not IT</span>
+R06 Contractor end dates (procurement)             AC-02l.[01] <span class="hi">← you pull, not IT</span>
+R07 Hardware inventory export (CMDB)               CM-08a.01, CM-08a.02
+R08 Scanner targets + last 3 scan summaries        RA-05a.[02], RA-05c.
+R09 Supplier assessment records, top 5 vendors     SR-06
+R10 Risk mgmt strategy / appetite statement        PM-09a.01
+<span class="c">— synthetic —</span>`}],
+  nist: {csf: ["PR.AA-05"], sp: ["ac-2"], hl: ["AC-02l.[01]", "AC-02f.[04]", "AC-02j."], showMethods: true, open: true},
+  four: {
+    cri: {t: "Each request maps to an 800-53A objective label, for example <b>AC-02l.[01]</b>: account management processes are aligned with personnel termination processes.", prov: "fw"},
+    src: {t: "800-53A's <b>examine</b> objects for AC-2 include the personnel termination policy, the list of active accounts with the individual associated with each, and the list of recently disabled accounts. Copy them across.", prov: "fw"},
+    suf: {t: "A request list is a plan, not evidence. It's sufficient when every objective you'll test has at least one object behind it.", v: "ok", vt: "plan complete", prov: "inf"},
+    ali: {t: "R05 and R06 are <b>populations</b>. You pull them from the systems of record (HR, procurement), not from the team whose control you're testing.", v: "na", vt: "planned", prov: "inf"}
+  },
+  owner: [{l: "IT Ops' view", t: "\"That's a lot of requests.\" Reasonable. Group them by owner, give deadlines, and explain that each one traces to a specific objective. That cuts down on the \"why do you need this?\" back-and-forth."}],
+  threat: {ctrl: "AC-02", note: "CTID maps AC-2 to a large number of ATT&amp;CK techniques (the count is below). That breadth is one reason this control earns depth in the plan."},
+  bias: {name: "Convenience sourcing", prov: "inf", trap: "Asking the control owner for the population you'll sample from (\"send me the leavers list\").", ct: "Counter: populations come from an independent system of record. The owner sends you <i>their</i> evidence; HR and procurement tell you who <i>should</i> have been processed."},
+  dec: {q: "Who should provide R05 (the HR separations list)?", opts: [
+    {t: "IT Operations. They process the terminations.", ok: false, fb: "That's the control owner supplying the population their own control is tested against. A missing leaver would be missing from both lists."},
+    {t: "HR, pulled directly by you or by HR for you.", ok: true, fb: "Right. The system of record for \"who left\" is HR. Procurement covers contractors, which is R06. Keep both."},
+    {t: "Either. They'll match.", ok: false, fb: "\"They'll match\" is the conclusion you're testing, not something you can assume going in."}
+  ]},
+  take: "Look for answers in the assessment objects NIST lists for each method. Build the request list from them, and source populations independently of the control owner.",
+  refs: [REF.a53, REF.cases, REF.oscal]
+},
+/* ---------------- S4 DOCUMENT REVIEW ---------------- */
+{
+  mod: "M3", life: 2, prof: 2, method: "Examine", depth: "focused (Study)", coverage: "basic", tier: "Target: Repeatable (3)", cism: [1, 3],
+  title: "Examine the policy",
+  lead: {msg: "A policy existing tells me nothing. Is it approved, owned, current, and does anyone follow it? Show me where each of those is evidenced.", tag: "examine"},
+  scene: `<p>R01 arrives: an access control policy PDF and a "procedures" Word document.</p>`,
+  evid: [{app: "PDF", title: "TAC-ISP-04 Access Control Policy.pdf — page 1", pre:
+`<span class="b">TAC-ISP-04  Access Control Policy           v2.1</span>
+Owner ............ Chief Information Security Officer
+Approved by ...... <span class="hi">K. Osei, CISO</span>   <span class="c">(left company 2025-02)</span>
+Approved ......... <span class="hi">2022-03-14</span>
+Next review ...... <span class="r">2023-03</span>
+Scope ............ All TAC employees
+                   <span class="r">(contractors not mentioned)</span>
+§6 Termination ... Accounts disabled upon HR notification.
+<span class="c">— synthetic —</span>`},
+  {app: "DOCX", title: "Access Procedures.docx — header", pre:
+`<span class="r">DRAFT — DO NOT DISTRIBUTE</span>     last modified 2024-11-02
+Status: never approved
+<span class="c">— synthetic —</span>`}],
+  nist: {csf: ["GV.PO-02"], sp: ["ac-1"], hl: ["AC-01a.[01]", "AC-01a.01(a)[02]", "AC-01b.", "AC-01c.01[01]", "AC-01a.[03]"], showMethods: true},
+  four: {
+    cri: {t: "<b>GV.PO-02</b>: policy is reviewed, updated, communicated and enforced. Tested through <b>AC-01c.01[01]</b> (policy reviewed and updated at the organization-defined frequency), <b>AC-01b.</b> (an official is designated) and <b>AC-01a.01(a)[02]</b> (the policy addresses scope).", prov: "fw"},
+    src: {t: "<b>Examine</b> the policy and procedure documents. These are the objects 800-53A lists first for AC-1.", prov: "fw"},
+    suf: {t: "Applying GAO's terms: the documents are <i>relevant</i>, and they're <i>reliable</i> only if they're the controlled copies. R01 asked for copies from the policy repository, so confirm that's where these came from, and ask once, in writing, whether a newer version exists. With those two checks, they're <i>sufficient</i> for a document-level conclusion.", v: "ok", vt: "sufficient for doc conclusion", prov: "inf"},
+    ali: {t: "Several problems: review overdue by more than 3 years; the approver has left the company; contractors are missing from scope; the procedures were never approved. <b>GV.PO-02 → gap.</b> Note: this says nothing yet about whether accounts <i>actually</i> get disabled.", v: "bad", vt: "gap", prov: "syn"}
+  },
+  owner: [
+    {l: "What they'll say", t: "\"Everyone knows the process. The document is just paperwork.\""},
+    {l: "Reasonable pushback", t: "\"Then the process should be easy to show me working. That's the next step. The document gap stands either way, because the criteria say the policy is <i>reviewed and updated</i>.\""}
+  ],
+  threat: {ctrl: null, note: "CTID maps no ATT&amp;CK techniques to AC-1, and that's expected. Policy controls work <i>through</i> operational controls like AC-2. This is why a policy gap matters most where it explains an operational failure."},
+  bias: {name: "\"It exists, so it works\"", prov: "inf", trap: "Ticking the policy box because a PDF exists with a version number and a signature block.", ct: "Counter: read the metadata. Approved by whom, when, next review, scope. Then remember that a current document still says nothing about operation."},
+  dec: {q: "The policy's scope says 'employees' and never mentions contractors. What do you do with that?", opts: [
+    {t: "Ignore it. It's a wording issue.", ok: false, fb: "Scope language decides who the control applies to. If contractors are out of the policy, they may be out of the process. That's a hypothesis worth testing."},
+    {t: "Note it as a document finding, and turn it into a testing hypothesis: are contractor accounts handled differently?", ok: true, fb: "Right. Document review sets up your testing. S6 checks this hypothesis directly."},
+    {t: "Rewrite the policy now so the gap goes away.", ok: false, fb: "The assessor doesn't fix the thing being assessed mid-fieldwork. Record it; remediation comes at S12, owned by management."}
+  ]},
+  take: "Document review answers whether the control is designed and governed, never whether it operates. Use it to generate hypotheses for testing.",
+  refs: [REF.a53, REF.gao, REF.oscal],
+  fx: {prof: {"GV.PO-02": "g"}, close: ["q4"]}
+},
+/* ---------------- S5 INTERVIEW ---------------- */
+{
+  mod: "M4", life: 2, prof: 2, method: "Interview", depth: "focused", coverage: "basic", tier: "Target: Repeatable (3)", cism: [3],
+  title: "Interview the control owner",
+  lead: {msg: "Open questions first, then a walkthrough, then 'show me.' And everything you hear is a claim until a document or a test backs it up.", tag: "interview"},
+  scene: `<p>800-53A's interview objects for AC-2 include personnel with account management responsibilities and system/network administrators (the full list is in the NIST panel). You book 30 minutes with <strong>Tom Brandt</strong>, IT Operations Manager.</p>`,
+  evid: [{app: "Notes", title: "interview-AC2-tbrandt-2026-10-08.txt", pre:
+`<span class="c">Interviewee: T. Brandt (IT Ops Mgr) · Interviewer: you · 30 min</span>
+Q (open) Walk me through what happens when someone leaves.
+A  HR opens a ticket on their last day; we disable AD the same
+   day. "Same day, every time."
+Q (walkthrough) Show me the last one you processed.
+A  [shows ticket INC-40882 → AD disabled same day]  <span class="g">✓ seen</span>
+Q  And contractors?
+A  "Same thing — their manager emails us."
+Q  Is that email tracked anywhere?
+A  "...it goes to the shared inbox. We're good about it."
+<span class="hi">CLAIMS TO CORROBORATE:</span> (1) employees same day
+                      <span class="hi">(2) contractors via manager email</span>
+<span class="c">— synthetic —</span>`}],
+  concept: {lbl: "Corroboration", prov: "inf", html: `800-53A lists <b>interview</b> objects next to <b>examine</b> and <b>test</b> objects for the same objective. The trainer reads that as a design cue: what you hear is one input, and the other two methods are how you corroborate it. Plan the corroboration before you leave the room. For interview <i>technique</i> (preparing from documents, setting a purpose, mixing open, probing and closed questions), see the ISACA Journal (2016) and IIA (2023) pieces linked below <span class="prov oc">practitioner</span>.`},
+  nist: {csf: ["PR.AA-05"], sp: ["ac-2"], hl: ["AC-02l.[01]", "AC-02f.[04]", "AC-02h.01"], showMethods: true},
+  four: {
+    cri: {t: "<b>AC-02l.[01]</b>: account management processes are aligned with personnel termination processes. <b>AC-02f.[04]</b>: accounts are disabled in accordance with the organization-defined policy and procedures.", prov: "fw"},
+    src: {t: "<b>Interview</b> the account manager (an 800-53A interview object). The single walkthrough item he showed you counts as one observed instance, not a test.", prov: "inf"},
+    suf: {t: "<i>Not sufficient.</i> One self-selected example plus testimony. The contractor path runs through an untracked inbox, and you have no record to sample from it.", v: "more", vt: "corroborate", prov: "inf"},
+    ali: {t: "Two testable claims, each with a test design: (1) employees disabled same day, tested against HR's list; (2) contractors via manager email, tested against procurement's list.", v: "na", vt: "hypotheses", prov: "inf"}
+  },
+  owner: [
+    {l: "How Tom hears your questions", t: "As an accusation, especially \"is that tracked anywhere?\" Keep it neutral: you're testing a process, not a person."},
+    {l: "What Tom will over-explain", t: "The employee path, because it works and he's proud of it. The contractor path gets one sentence. That gap in detail tells you something."}
+  ],
+  threat: {ctrl: "AC-02", note: "If contractor accounts stay enabled after the contract ends, that's the condition behind <b>T1078 Valid Accounts</b>, one of the techniques CTID maps AC-2 as mitigating (listed below)."},
+  bias: {name: "Narrative capture", prov: "inf", trap: "Tom is confident, credible and helpful, and \"same day, every time\" becomes your working conclusion.", ct: "Counter: write claims in a separate block and plan the corroborating test for each one before the meeting ends. Confidence is not evidence."},
+  dec: {q: "Tom offers to send you 'a few good examples' of contractor offboarding. You…", opts: [
+    {t: "Accept them. That saves time.", ok: false, fb: "That's an auditee-selected sample. The examples will be good ones; that's why they were picked."},
+    {t: "Thank him, and select contractor items yourself from procurement's end-date list.", ok: true, fb: "Right. The assessor picks the sample from an independent population."},
+    {t: "Skip contractors. There are only a few.", ok: false, fb: "\"Only a few\" plus an untracked process is exactly where a focused sample belongs."}
+  ]},
+  take: "Interviews show you how a process is supposed to work and where to probe. They don't prove it works. Treat every answer as a claim that needs a corroborating test.",
+  refs: [REF.a53, REF.isacaInt, REF.iiaInt]
+},
+/* ---------------- S6 TEST + SAMPLE ---------------- */
+{
+  mod: "M5", life: 2, prof: 2, method: "Test", depth: "focused", coverage: "basic + focused", tier: "Target: Repeatable (3)", cism: [3, 4],
+  title: "Test it: sample, compare, find the exceptions",
+  lead: {msg: "Tell me your sample design before you show me results: the population, who picked the sample, and why that coverage.", tag: "test"},
+  scene: `<p>Population for the period 2026-04-01 → 2026-09-30: <strong>34</strong> employee separations (HR, R05) and <strong>9</strong> contractor end dates (procurement, R06). You test against AD's disable timestamps.</p>`,
+  concept: {lbl: "Depth & coverage — NIST's terms", prov: "fw", html: `NIST's coverage values: a <b>basic sample</b> is representative; a <b>focused sample</b> extends it to include other important objects; a <b>sufficiently large sample</b> extends that further. Your design: a <b>basic sample</b> of 11 employees, selected at random from 34, plus a <b>focused</b> extension that takes <b>all 9 contractors</b>, because the interview showed that path to be different and untracked. <span class="prov inf">inference</span> The numbers are this engagement's choice. NIST does not prescribe sample sizes, and no free primary source sets them.`},
+  evid: [{app: "Workpaper", title: "WP-AC2-01 termination test — results", pre:
+`<span class="c">Threshold: disable window = 1 business day (org-defined, agreed S2)</span>
+<span class="b">Stratum     n   Within window   Late (calendar d)   Still enabled</span>
+Employees   11  11              0                   0     <span class="g">✓</span>
+Contractors  9   3              4 (+6 to +41)       <span class="r">2</span>
+
+<span class="b">Contractor exceptions</span>   <span class="c">end dates confirmed with hiring managers</span>
+c-0172  end 2026-05-30  disabled 2026-06-05  (+6 cal. days)
+c-0188  end 2026-06-14  disabled 2026-07-25  (+41 cal. days)
+c-0193  end 2026-07-01  disabled 2026-07-14  (+13 cal. days)
+c-0201  end 2026-08-08  disabled 2026-08-20  (+12 cal. days)
+c-0207  end 2026-08-29  <span class="r">ENABLED</span>  last VPN logon <span class="r">2026-09-17</span>
+c-0214  end 2026-09-12  <span class="r">ENABLED</span>  last logon 2026-09-11
+<span class="c">Accounts/dates synthetic · c-#### are placeholder IDs</span>`}],
+  nist: {csf: ["PR.AA-05"], sp: ["ac-2"], hl: ["AC-02f.[04]", "AC-02l.[01]", "AC-02g."], showMethods: true},
+  four: {
+    cri: {t: "<b>AC-02f.[04]</b>: accounts are disabled in accordance with the organization-defined procedures. <b>AC-02l.[01]</b>: aligned with termination processes.", prov: "fw"},
+    src: {t: "<b>Test</b> organizational processes for account management against two independent populations, then compare against AD (a mechanism implementing account management).", prov: "fw"},
+    suf: {t: "Sufficient for a conclusion <i>per stratum</i>. Contractors fail (a census of all 9, so there's no sampling risk). Employees show no exceptions in 11 random items. That supports \"operating as claimed\", with ordinary sampling risk, so say it that way. Appropriate, because the populations came from systems of record, the end dates were confirmed with hiring managers, and the timestamps came from AD.", v: "ok", vt: "sufficient", prov: "inf"},
+    ali: {t: "Exception rate: 0/11 employees, 6/9 contractors. One enabled account shows a VPN logon <b>after</b> the contract ended. <b>PR.AA-05 → gap</b> for the contractor population.", v: "bad", vt: "exceptions", prov: "syn"}
+  },
+  owner: [
+    {l: "Tom's first reaction", t: "\"Managers didn't email us. That's not on IT.\""},
+    {l: "Reasonable pushback", t: "\"That may be the cause, and it goes in the finding. The criteria are about the <i>process</i> being aligned to termination, and right now there's no process for contractors that doesn't depend on someone remembering.\""}
+  ],
+  threat: {ctrl: "AC-02", note: "c-0207 logged on over VPN 19 days after the contract ended. <b>You are an assessor, not an investigator.</b> Escalate it today to the incident process for triage. Don't analyze it inside the workpaper. (The incident side is what the dfir-trainers repo covers.)"},
+  gate: {q: "Competing explanations for the contractor exceptions", rows: [
+    ["Operating failure (people didn't follow a good process)", "Employees: 11/11 fine", "No contractor procedure exists to follow (S4 draft never approved)", ""],
+    ["<b>Design gap</b> (no process covers contractors)", "Policy scope = employees only; manager email path untracked", "None found", "w"],
+    ["Evidence gap (they were disabled; logs are wrong)", "—", "AD shows 2 still enabled at fieldwork; VPN logon recorded", ""],
+    ["Scope / criteria mismatch (contractors not meant to be covered)", "Policy says 'employees'", "AC-2 covers all system accounts; target agreed at S2 covers them", ""],
+    ["Data error (procurement end dates wrong: extensions, re-engagements)", "—", "All 6 end dates confirmed with hiring managers before reporting", ""]
+  ]},
+  bias: {name: "Anchoring on the good stratum", prov: "inf", trap: "11/11 employees passed, so it feels like the control \"basically works\" and the contractors are noise.", ct: "Counter: report by stratum. A clean majority doesn't dilute a design gap in a high-risk population."},
+  dec: {q: "c-0207 shows a VPN logon after the contract ended. Your next action:", opts: [
+    {t: "Disable the account yourself. You have the evidence.", ok: false, fb: "Don't alter the system under test, and don't alter what may become incident evidence. Escalate to the control owner and the incident process."},
+    {t: "Escalate the same day to TAC's incident process and to the control owner (IT Ops), note it in the workpaper, and carry on with the assessment.", ok: true, fb: "Right. A possible incident goes to the people who handle incidents, and quickly. Your finding stands either way."},
+    {t: "Wait and include it in the final report in six weeks.", ok: false, fb: "A live risk can't wait for the reporting calendar. Assessors escalate when they find one."}
+  ]},
+  take: "Sample from independent populations, report results by stratum, and before you name a cause, test it against the other plausible ones.",
+  refs: [REF.cases, REF.a53, REF.ctid, REF.dfir],
+  fx: {prof: {"PR.AA-05": "g"}, close: ["q5"]}
+},
+/* ---------------- S7 INVENTORY ---------------- */
+{
+  mod: "M5", life: 2, prof: 2, method: "Test", depth: "focused", coverage: "census (full reconcile)", tier: "Target: Repeatable (3)", cism: [3],
+  title: "Test the population itself: asset inventory",
+  lead: {msg: "Every other test samples from some list. If the list is wrong, every test is wrong. Reconcile the inventory against what's actually on the network.", tag: "test"},
+  scene: `<p>The CMDB export (R07) is your population for scanning, patching and configuration. You compare it against 30 days of DHCP/NAC records from the three sites.</p>`,
+  evid: [{app: "Workpaper", title: "WP-CM8-01 inventory reconciliation", pre:
+`CMDB active records ............................ 612
+Distinct devices seen on network (30d) .......... 668
+Matched (in both) ............................... 589
+In CMDB, not seen in 30d ........................  23  <span class="c">(retired? offline?)</span>
+<span class="hi">Seen on network, NOT in CMDB ....................  79</span>
+   ramp handheld scanners (vendor MDM) ...........  52
+   label/warehouse printers ......................  14
+   <span class="r">unidentified ...................................   4</span>  <span class="c">→ escalated same day</span>
+   personal phones on corp Wi-Fi .................   9  <span class="c">→ not org hardware:</span>
+                                                         <span class="c">separate observation O-01</span>
+<span class="hi">Org-managed / in-boundary devices missing from CMDB  70</span>  <span class="c">(52+14+4)</span>
+<span class="c">612 − 23 = 589 · 668 − 589 = 79 · 79 − 9 = 70 · 70/668 ≈ 10.5% — synthetic</span>`}],
+  nist: {csf: ["ID.AM-01"], sp: ["cm-8"], hl: ["CM-08a.01", "CM-08a.02", "CM-08b."], showMethods: true},
+  four: {
+    cri: {t: "<b>CM-08a.02</b>: the inventory includes all components within the system. <b>CM-08a.01</b>: it accurately reflects the system.", prov: "fw"},
+    src: {t: "<b>Test</b> the mechanisms supporting inventory (the CMDB) against an independent observation of the network (DHCP and NAC records).", prov: "fw"},
+    suf: {t: "A full reconciliation, which is a census rather than one of NIST's three sample terms, because the inventory is the population for other tests. Before concluding, apply the criteria precisely. ID.AM-01 is hardware <i>managed by the organization</i>, and CM-08a.02 is components <i>within the system</i>. The 9 personal phones are neither, so they're a different issue (BYOD on the corporate network) and get recorded separately. The 4 unidentified devices could be rogue, so they go to security operations <b>today</b>, the same way the S6 VPN logon did.", v: "ok", vt: "sufficient", prov: "inf"},
+    ali: {t: "70 in-boundary devices (about 10.5% of those observed) are missing from the inventory. <b>ID.AM-01 → gap.</b> Every test built on the CMDB (RA-5 next) inherits the gap. Observation O-01 (personal devices on corporate Wi-Fi) is reported separately.", v: "bad", vt: "gap", prov: "syn"}
+  },
+  owner: [{l: "Ops' view", t: "\"The handhelds are in the vendor's MDM. They're inventoried, just not in ours.\" A fair point, and it goes into the cause. The criterion is <i>one</i> inventory that reflects the system: a second list you can't see doesn't feed your scanning."}],
+  threat: {ctrl: "CM-08", note: "Unknown devices are unmanaged attack surface. CTID's CM-8 mapping includes <b>T1133 External Remote Services</b> and <b>T1190 Exploit Public-Facing Application</b> (listed below)."},
+  bias: {name: "Population trust", prov: "inf", trap: "Treating the CMDB as truth because it's the official system.", ct: "Counter: before you sample from any list, ask what independent source could show the list is incomplete. Then check it."},
+  dec: {q: "Why reconcile the full inventory instead of sampling it?", opts: [
+    {t: "Because NIST requires 100% for inventories.", ok: false, fb: "800-53A doesn't say that, and its three coverage terms are all <i>sample</i> levels. A census is your choice, and yours to defend."},
+    {t: "Because it's the population for other tests. A sample can't tell you what's <i>missing</i> from a list.", ok: true, fb: "Right. Completeness can only be tested against an independent full view. Sampling from the list itself will never find the gaps in it."},
+    {t: "Because the data was easy to get.", ok: false, fb: "Convenience isn't a coverage rationale. Write the real reason in the workpaper."}
+  ]},
+  take: "Test whether a population is complete before you sample from it. An inventory gap is often the cause behind several other findings.",
+  refs: [REF.a53, REF.ctid],
+  fx: {prof: {"ID.AM-01": "g"}, close: ["q6"]}
+},
+/* ---------------- S8 VULN SCANNING ---------------- */
+{
+  mod: "M5", life: 2, prof: 2, method: "Examine + Test", depth: "basic", coverage: "basic", tier: "Target: Repeatable (3)", cism: [2, 3],
+  title: "Follow the gap: what the scanner can't see",
+  lead: {msg: "Quick one. Where does the scanner get its target list? If the answer is 'the CMDB,' you already know part of your finding.", tag: "examine"},
+  scene: `<p>R08: the scanner's target configuration and the last three monthly scan summaries.</p>`,
+  evid: [{app: "Config", title: "scanner targets — source", pre:
+`target_source:   cmdb_sync (nightly)
+schedule:        monthly, all targets
+last 3 runs:     612 targets each; <span class="g">589 / 588 / 589 responded</span>
+                 <span class="c">(non-responders ≈ the 23 stale CMDB records)</span>
+criticals open > 30d:  7   <span class="c">(tracked in tickets)</span>
+response-time SLA:  <span class="r">none defined</span>   <span class="c">(RA-05d ODP — left open at S2)</span>
+<span class="r">not targeted:    devices absent from CMDB (n=70, see WP-CM8-01)</span>
+<span class="c">— synthetic —</span>`}],
+  nist: {csf: ["ID.RA-01"], sp: ["ra-5"], hl: ["RA-05a.[02]", "RA-05c.", "RA-05d."], showMethods: true},
+  four: {
+    cri: {t: "<b>RA-05a.[02]</b>: systems and hosted applications are scanned for vulnerabilities at the organization-defined frequency. <b>ID.RA-01</b>: vulnerabilities are identified, validated and recorded.", prov: "fw"},
+    src: {t: "<b>Examine</b> the scanning tool's configuration documentation and the scan results. <b>Test</b> by comparing the target list to the reconciled inventory.", prov: "fw"},
+    suf: {t: "Sufficient on coverage: the configuration shows the target source, and the S7 reconciliation quantifies what's excluded. <b>RA-05d</b> can't be tested at all. The 7 criticals open beyond 30 days can't be judged late or on time, because no organization-defined response time exists.", v: "ok", vt: "sufficient", prov: "inf"},
+    ali: {t: "Scanning runs against every CMDB target and is blind to 70 devices. <b>ID.RA-01 → partial</b> (F-04). Two causes: the CMDB gap (F-03), and the scanner being fed from it. Fixing it needs both: complete the inventory, <i>and</i> point the scanner at the reconciled list. The missing response-time value goes into F-04, so RA-05d can be tested next cycle.", v: "more", vt: "partial", prov: "syn"}
+  },
+  owner: [{l: "Security engineer's view", t: "\"Scanning is fine. Every target that answered got scanned.\" True. The finding is about coverage and an undefined response time, not about the scanner working. That framing keeps the conversation calm."}],
+  threat: {ctrl: "RA-05", note: "Unscanned devices are where exploitable flaws stay unknown. CTID maps RA-5 to <b>T1190</b> and <b>T1210 Exploitation of Remote Services</b>, among others."},
+  bias: {name: "Metric comfort", prov: "inf", trap: "A 100% scan-completion metric feels like coverage.", ct: "Counter: always ask \"100% of <i>what</i>?\" A ratio is only as good as its denominator."},
+  dec: {q: "How do you write up the scanner issue relative to the inventory finding?", opts: [
+    {t: "As two unrelated findings.", ok: false, fb: "Then management fixes two symptoms and leaves the shared cause alone."},
+    {t: "As a separate finding that names its cause as the inventory gap (F-03) and links the two.", ok: true, fb: "Right. Separate criteria, shared cause. The remediation plan fixes the cause once."},
+    {t: "Fold it into the inventory finding and drop it.", ok: false, fb: "The two have different criteria and different effects, so they need separate findings. The cause link is what connects them."}
+  ]},
+  take: "When two findings share a cause, link them. Fixing the cause once is cheaper and lasts longer than treating each symptom.",
+  refs: [REF.a53, REF.ctid],
+  fx: {prof: {"ID.RA-01": "p"}, close: ["q7"]}
+},
+/* ---------------- S9 SUPPLIER ---------------- */
+{
+  mod: "T1", life: 2, prof: 2, method: "Examine + Interview", depth: "focused", coverage: "basic", tier: "Target: Repeatable (3)", cism: [3],
+  title: "Supplier risk: read the assurance report, not the logo",
+  lead: {msg: "Procurement says 'they have a SOC 2.' What period does it cover, what does it leave out, and what does it say <i>we</i> have to do?", tag: "third party"},
+  scene: `<p><strong>Plovertrack</strong> (a fictional SaaS shipment-tracking platform) holds every customer's shipment data. Procurement's file (R09) holds a SOC 2 Type II report collected at onboarding.</p>`,
+  evid: [{app: "PDF", title: "Plovertrack SOC 2 Type II — key pages (summarized)", pre:
+`Report period ....... 2024-07-01 → <span class="hi">2025-06-30</span>
+Report date ......... 2025-08-15
+Opinion ............. unqualified
+Subservice org ...... cloud hosting provider — <span class="hi">carved out</span>
+Exceptions noted .... 2 (change mgmt approvals) — mgmt responses
+CUECs (user entity controls), incl.:
+  "User entities are responsible for <span class="r">timely removal of
+   access for their terminated users</span>."
+Newer report ........ <span class="r">not requested since onboarding</span>
+Bridge letter ....... <span class="r">none on file</span>
+Subservice report ... <span class="r">not requested</span> (hosting provider)
+Plovertrack login ... <span class="r">local accounts (no SSO to TAC AD)</span>
+<span class="c">— synthetic; report content invented —</span>`}],
+  concept: {lbl: "Reading a SOC 2 report: four things to check", prov: "oc", html: `Practitioner guidance (Linford &amp; Co; Bitsight) names four checks.<br><b>The period.</b> How stale it is. A <i>bridge (gap) letter</i> is a <b>management</b> assertion, not auditor assurance, and Linford notes it typically covers a short gap of about three months or less, between the report's end and now. It can't stand in for a report that's more than a year old. Ask for the <b>newer report</b> first, and a bridge letter only for the short remaining gap.<br><b>Carve-outs.</b> Subservice organizations excluded from testing. Ask for the subservice organization's own report, and check the complementary controls the report expects of it.<br><b>Exceptions.</b> Read the test results, not only the opinion.<br><b>CUECs.</b> Controls the report assumes <i>you</i> perform.<br>The authoritative description criteria are AICPA's DC 200, which needs a free account and wasn't read for this build.`},
+  nist: {csf: ["GV.SC-07"], sp: ["sr-6"], hl: [], showMethods: true},
+  four: {
+    cri: {t: "<b>GV.SC-07</b>: supplier risks are understood, recorded, prioritized, assessed, responded to and <i>monitored over the course of the relationship</i>. <b>SR-6</b>: assess and review supplier risks at the organization-defined frequency.", prov: "fw"},
+    src: {t: "<b>Examine</b> records of supplier due diligence reviews (an SR-6 examine object). <b>Interview</b> procurement and the business owner.", prov: "fw"},
+    suf: {t: "Enough to conclude that monitoring isn't happening: one review at onboarding, a report now more than 15 months past its period end, and no newer report requested. <i>Not</i> enough to say anything about contractor accounts inside Plovertrack. You haven't tested them.", v: "ok", vt: "sufficient (for SC-07)", prov: "inf"},
+    ali: {t: "<b>GV.SC-07 → partial</b> (F-05). The CUEC points back at S6. Plovertrack uses local accounts, so the contractor gap <i>may</i> extend into the vendor's platform. That's an <b>untested risk</b>. Record it as a follow-up test (sample contractor end dates against Plovertrack's user list). Don't fold it into F-01's condition.", v: "more", vt: "partial", prov: "syn"}
+  },
+  owner: [{l: "Procurement's view", t: "\"We checked them when we signed.\" That's true, and it's the point. The criterion says <i>over the course of the relationship</i>. Ask for the newer report (with a bridge letter only for any short gap after it) and the hosting provider's report, and set a review cycle."}],
+  threat: {ctrl: null, note: "CTID maps no techniques to SR-6 directly. But a stale vendor account belonging to an ex-contractor is <b>T1078 Valid Accounts</b> again, this time in someone else's platform."},
+  bias: {name: "Halo effect", prov: "inf", trap: "\"They have a SOC 2\" makes the vendor feel safe.", ct: "Counter: a report's opinion covers <i>their</i> controls, <i>in that period</i>, <i>minus the carve-outs</i>, <i>assuming your CUECs</i>. Read all four before you lean on it."},
+  dec: {q: "Which item in the report most changes your earlier findings?", opts: [
+    {t: "The unqualified opinion.", ok: false, fb: "An opinion is about their controls during their period. It doesn't touch your findings."},
+    {t: "The CUEC on removing terminated users' access, combined with Plovertrack's local accounts.", ok: true, fb: "Right. It suggests your contractor-deprovisioning gap may reach into the vendor's platform. Test it (a follow-up sample) before you claim it, and include Plovertrack in F-01's recommended fix either way."},
+    {t: "The two change-management exceptions.", ok: false, fb: "Worth noting and following up, but they're the vendor's to fix, and they don't change your own control findings."}
+  ]},
+  take: "Supplier assurance covers a specific period and scope, and it assumes you run certain controls yourself. Check the CUECs against your own findings.",
+  refs: [REF.linford, REF.bridge, REF.bitsight, REF.dc200, REF.oscal],
+  fx: {prof: {"GV.SC-07": "p"}, close: ["q8"]}
+},
+/* ---------------- S10 FINDINGS ---------------- */
+{
+  mod: "M6", life: 3, prof: 3, method: "—", depth: "—", coverage: "—", tier: "Target: Repeatable (3)", cism: [2],
+  title: "Write the findings: criteria, condition, cause, effect",
+  lead: {msg: "If a finding doesn't say what should be, what is, why, and so what, it's an opinion. Write F-01 in full and show me.", tag: "findings"},
+  concept: {lbl: "GAO's elements of a finding (verbatim, Yellow Book glossary)", prov: "fw", html: `<b>Criteria</b>: "the required or desired state or expectation with respect to the program or operation." <b>Condition</b>: "A situation that exists. The condition is determined and documented during the engagement." <b>Cause</b>: "The factor or factors responsible for the difference between the condition and the criteria, which may also serve as a basis for recommendations for corrective actions." <b>Effect or potential effect</b>: "The outcome or consequence resulting from the difference between the condition and the criteria." <span style="color:var(--faint)">U.S. GAO, public domain.</span>`},
+  scene: `<p>F-01 below is written out in full. F-02 through F-05 follow the same pattern.</p>`,
+  evid: [{app: "Report", title: "F-01 Contractor accounts not disabled at end of engagement", pre:
+`<span class="b">CRITERIA</span>   PR.AA-05; AC-2 objectives AC-02f.[04], AC-02l.[01] —
+           accounts disabled per defined procedure, aligned with
+           termination. Org-defined window (agreed S2): 1 business day.
+<span class="b">CONDITION</span>  6 of 9 contractor end dates in 2026-04→09 (all 9 tested)
+           were outside the window: 4 disabled 6–41 calendar days
+           late; 2 still enabled at fieldwork, one with a VPN logon
+           19 days after its end date. Employees: 0 of 11 sampled.
+<span class="b">CAUSE</span>      No approved procedure covers contractors (policy scope
+           "employees"; procedure never approved). Contractor
+           offboarding relies on untracked manager email.
+<span class="b">EFFECT</span>     Former contractors retained usable directory/VPN access
+           after their engagements ended; one instance referred to
+           TAC's incident process for triage.
+<span class="b">RECOMMEND</span>  Feed procurement end dates into the same automated
+           disable path as HR; extend policy scope (F-02); interim
+           weekly reconciliation; include non-SSO SaaS (Plovertrack).
+<span class="b">FOLLOW-UP</span>  Untested: contractor accounts inside Plovertrack (CUEC).
+<span class="c">— synthetic —</span>`},
+  {app: "Register", title: "Findings summary", pre:
+`F-01 Contractor deprovisioning ......... PR.AA-05  <span class="r">gap</span>
+F-02 Access policy out of review ........ GV.PO-02  <span class="r">gap</span>
+F-03 Hardware inventory incomplete ...... ID.AM-01  <span class="r">gap</span>
+F-04 Scanner blind to non-CMDB devices;  ID.RA-01  <span class="hi">partial</span>  (cause: F-03 +
+     no vuln response times defined                       scanner feed)
+F-05 Supplier monitoring lapsed ......... GV.SC-07  <span class="hi">partial</span>
+O-01 Personal devices on corporate Wi-Fi  (observation — outside ID.AM-01;
+     refer to network/mobile-device owners)
+<span class="c">— synthetic —</span>`}],
+  nist: {csf: ["PR.AA-05"], sp: ["ac-2"], hl: ["AC-02f.[04]", "AC-02l.[01]"]},
+  four: {
+    cri: {t: "Each finding names its CSF outcome, the 800-53A objective labels tested, and the target line and organization-defined values agreed at S2.", prov: "inf"},
+    src: {t: "Your workpapers: WP-AC2-01, WP-CM8-01, the document review notes, the interview notes, the supplier file.", prov: "syn"},
+    suf: {t: "GAO: <b>sufficiency</b> is \"a measure of the quantity of evidence used to support the findings and conclusions…\". <b>Appropriateness</b> is \"the measure of the quality of evidence that encompasses the relevance, validity, and reliability of evidence…\". Check both for every finding. A finding states only what that evidence supports. Untested extensions (Plovertrack) go into a follow-up, not into the condition.", v: "ok", vt: "check each", prov: "fw"},
+    ali: {t: "Five findings and one observation, each traced to an outcome. Cause links: F-04 → F-03; F-01 ↔ F-02 (policy scope).", v: "na", vt: "drafted", prov: "syn"}
+  },
+  owner: [{l: "How management reads a finding", t: "First they hunt for the sentence that blames a person. Write causes as <i>conditions of the system</i> (\"no approved procedure covers…\"), not people. You'll get a better management response."}],
+  threat: {ctrl: "AC-02", note: "In the effect statement, name the exposure plainly (former contractors retain valid access). Don't speculate about an attacker the evidence hasn't shown."},
+  bias: {name: "Severity creep", prov: "inf", trap: "The VPN logon makes F-01 feel like a breach, and the language escalates (\"compromised\").", ct: "Counter: the condition says what you observed. Triage is handling the logon. The finding doesn't claim an incident it hasn't established."},
+  dec: {q: "Which sentence is a CAUSE, not a condition?", opts: [
+    {t: "\"2 contractor accounts were still enabled at fieldwork.\"", ok: false, fb: "That's what exists, which makes it the condition."},
+    {t: "\"Offboarding relies on untracked manager email; no approved procedure covers contractors.\"", ok: true, fb: "Right. That explains <i>why</i> the condition differs from the criteria, and the recommendation targets it."},
+    {t: "\"Former contractors retained usable access after their engagements ended.\"", ok: false, fb: "That's the consequence, which makes it the effect."}
+  ]},
+  take: "Every finding needs criteria, condition, cause and effect. Write the cause as a property of the system, not a person, and aim the recommendation at the cause.",
+  refs: [REF.gao, REF.yb]
+},
+/* ---------------- S11 RISK ---------------- */
+{
+  mod: "M7", life: 3, prof: 3, method: "Interview + Examine", depth: "basic", coverage: "basic", tier: "Current (judgment): Risk Informed (2)", cism: [2],
+  title: "Rate the risk, and discover there's nothing to rate against",
+  lead: {msg: "Before you call anything high risk: high compared with what? Show me the organization's appetite statement.", tag: "risk"},
+  scene: `<p>You ask the CFO for the risk management strategy and the appetite statement (R10). There's a 2024 strategy slide deck with three objectives on it. There is no appetite or tolerance statement. The committee has never been asked for one.</p>`,
+  evid: [{app: "Register", title: "risk-register-draft (qualitative; org-defined scale)", pre:
+`<span class="b">ID   Risk statement                              L      I      Current*</span>
+R-1  Former contractor access used to reach      Mod    High   High
+     shipment data (F-01)
+R-2  Uninventoried devices exploited unseen      Mod    Mod    Mod
+     (F-03/F-04)
+R-3  Vendor platform access persists — untested  Low    High   Mod
+     (F-05/CUEC follow-up)
+R-4  Policy no longer reflects operations (F-02) Mod    Low    Low
+<span class="c">*Current = as observed, with today's (failing) controls; residual is rated
+ after the POA&amp;M. Scale Low/Mod/High: org-defined, synthetic.</span>
+<span class="c">"Within appetite?" → </span><span class="r">cannot answer</span>`}],
+  concept: {lbl: "Why appetite comes first", prov: "fw", html: `CSF 2.0 <b>GV.RM-02</b> expects risk appetite and tolerance statements to be established, communicated and maintained. Its own implementation examples include turning appetite statements into measurable tolerance statements. PM-9's guidance says an organization-wide risk management strategy includes an expression of risk tolerance. <span class="prov inf">inference</span> Without one, there's no organizational threshold to compare a rating against.`},
+  nist: {csf: ["GV.RM-02", "GV.RM-01"], sp: ["pm-9"], hl: ["PM-09a.01", "PM-09c."], showMethods: true},
+  four: {
+    cri: {t: "<b>GV.RM-02</b> (appetite and tolerance statements); <b>GV.RM-01</b> (objectives agreed by stakeholders); <b>PM-09a.01</b> (a comprehensive strategy is developed).", prov: "fw"},
+    src: {t: "<b>Examine</b> the risk management strategy (a PM-9 examine object). <b>Interview</b> the people responsible for developing it, here the CFO.", prov: "fw"},
+    suf: {t: "Sufficient to conclude the statements don't exist. Absence is confirmed by the owner and backed by a document search.", v: "ok", vt: "sufficient", prov: "syn"},
+    ali: {t: "<b>GV.RM-02 → gap</b> (F-06). <b>GV.RM-01 → partial</b>: objectives exist, but the committee never agreed them. This becomes a <b>board decision</b>, not a management fix. <br><span class=\"prov inf\">judgment</span> <b>Tier read: Risk Informed (2).</b> CSWP 29's Tiers characterize how rigorous the governance and management practices are; they aren't computed from subcategory scores. The basis here: practices exist and are approved by management (the strategy deck, the access process for employees), but there's no board-set appetite, policies have lapsed, and the practices aren't consistent across populations (contractors). State that basis whenever you state the tier.", v: "bad", vt: "gap", prov: "syn"}
+  },
+  owner: [{l: "CFO's view", t: "\"We manage risk fine without a statement.\" Possibly, but then nobody can tell whether R-1 is acceptable. Offer a one-paragraph draft appetite statement for the committee to edit. Make the decision easy to take."}],
+  threat: {ctrl: null, note: "Risk ratings here are qualitative and synthetic. Quantitative approaches (FAIR, for example) estimate frequency and magnitude. The Open FAIR body of knowledge is non-commercial licensed, so it's linked, not embedded."},
+  bias: {name: "Availability (again)", prov: "inf", trap: "The peer ransomware event pushes every rating to High.", ct: "Counter: rate likelihood from <i>your</i> evidence (the conditions you observed), and record what drove each rating."},
+  dec: {q: "R-1 is rated High. Can you tell the board it 'exceeds appetite'?", opts: [
+    {t: "Yes. High always exceeds appetite.", ok: false, fb: "Says who? There's no appetite statement. That's your threshold, not the organization's."},
+    {t: "No. Report that no appetite statement exists (F-06) and ask the committee to set one, so R-1 can be judged against it.", ok: true, fb: "Right. Turning a missing statement into a board decision is exactly what GV.RM-02 is about, and it answers the committee's question honestly."},
+    {t: "Leave the risk ratings out of the report.", ok: false, fb: "The ratings still inform priority. Just don't claim a comparison against a threshold that doesn't exist."}
+  ]},
+  take: "Risk ratings need a threshold set by the organization. If there's no appetite statement, reporting that gap is the most useful finding you can give a board.",
+  refs: [REF.csf, REF.oscal, REF.ir8286],
+  fx: {prof: {"GV.RM-02": "g", "GV.RM-01": "p"}, close: ["q9"]}
+},
+/* ---------------- S12 POA&M ---------------- */
+{
+  mod: "M8", life: 4, prof: 3, method: "—", depth: "—", coverage: "—", tier: "Current (judgment): Risk Informed (2)", cism: [2, 3],
+  title: "Build the POA&M: owners, milestones, and proof of closure",
+  lead: {msg: "A POA&M line with no owner, no dates and no closure evidence is just a wish. And nobody closes a line by changing its status.", tag: "remediate"},
+  concept: {lbl: "NIST's OSCAL POA&M model", prov: "fw", html: `NIST's example OSCAL POA&amp;M links each <b>risk</b> (title, description, statement, status, likelihood and impact, deadline) to <b>remediations</b> (a type such as <i>accept</i>, a lifecycle stage such as <i>planned</i>, and <b>milestone tasks</b> with dates). <b>CA-05a</b> asks for a POA&amp;M documenting planned remediation of weaknesses; <b>CA-05b</b> asks for it to be updated at an organization-defined frequency.`},
+  evid: [{app: "POA&M", title: "poam-v1 (shape follows OSCAL)", pre:
+`<span class="b">risk</span>   R-1 Former contractor access persists        status: open
+       likelihood: moderate  impact: high          deadline: 2027-01-31
+<span class="b">remed</span>  type: mitigate  lifecycle: planned
+  M1 2026-10-23 interim: weekly reconcile procurement↔AD  owner: IT Ops
+  M2 2026-11-30 procurement end-date feed → auto-disable  owner: IT + Proc
+  M3 2026-12-15 Plovertrack: SSO or monthly access review owner: Biz owner
+  M4 2027-01-31 retest AC-2 contractor stratum             owner: <span class="hi">independent assessor</span>
+<span class="b">closure</span> evidence = retest WP with 0 exceptions, not a status change
+
+<span class="b">risk</span>   R-4 Policy out of review (F-02)              status: open
+<span class="b">remed</span>  type: mitigate  M1 2026-12-01 revise ISP-04 scope incl.
+       contractors; approve by named official (AC-01b); set review
+       frequency (AC-01c ODP)
+<span class="c">— synthetic —</span>`},
+  {app: "Sheet", title: "TAC's own improvement tracker (pre-existing, from a 2025 pen test)", pre:
+`items 8 · closed with evidence 3 · open with dates 0 · <span class="r">open, no dates 5</span>
+last updated 2025-11-20 · no owner column
+<span class="c">— synthetic — this, not your new POA&amp;M, is the basis for rating ID.IM-01</span>`}],
+  nist: {csf: ["ID.IM-01"], sp: ["ca-5"], hl: ["CA-05a.", "CA-05b."], showMethods: true},
+  four: {
+    cri: {t: "<b>ID.IM-01</b>: improvements are identified from evaluations. <b>CA-05a / CA-05b</b>: a POA&amp;M is developed, then updated at the organization-defined frequency.", prov: "fw"},
+    src: {t: "<b>Examine</b> TAC's existing improvement tracker (the plan of action and milestones is a CA-5 examine object). Management owns and agrees the new POA&amp;M lines; you check them for completeness.", prov: "inf"},
+    suf: {t: "Rate ID.IM-01 on <i>TAC's own</i> practice, not on the POA&amp;M you helped draft. Rating your own work product is a self-review threat. Their tracker identifies improvements (3 closed with evidence) but has no owners or dates for 5 items and hasn't been updated in roughly 11 months. The CA-5b frequency (monthly, agreed at S2) isn't being met.", v: "ok", vt: "sufficient", prov: "inf"},
+    ali: {t: "<b>ID.IM-01 → partial</b>, based on the pre-existing tracker. The new POA&amp;M is management's, and it's the vehicle for fixing this. Interim compensating action for R-1: the weekly reconciliation.", v: "more", vt: "partial", prov: "syn"}
+  },
+  owner: [{l: "Owner pushback", t: "\"Can we mark M1 done once the script exists?\" Pushback: done means the reconciliation <i>ran</i> and produced output. Closure evidence is an artifact, not an intention."}],
+  threat: {ctrl: null, note: "The interim control (a weekly reconciliation) narrows the exposure window for valid-account misuse while the permanent fix is built."},
+  bias: {name: "Closure optimism", prov: "inf", trap: "The owner updates the status to \"closed\" and the tracker turns green.", ct: "Counter: the closing milestone is the assessor's retest. Closure evidence is named on the line, in advance."},
+  dec: {q: "Management proposes to ACCEPT the risk behind O-01 (personal devices on corporate Wi-Fi) until next year's network segmentation project. Your role?", opts: [
+    {t: "Refuse. Risk acceptance isn't allowed.", ok: false, fb: "Acceptance is a legitimate remediation type. NIST's own OSCAL POA&amp;M example shows an accepted risk with a deadline."},
+    {t: "Make sure the acceptance is made by someone with authority, recorded with a deadline and a rationale, and checked against the appetite statement once one exists.", ok: true, fb: "Right. Your job is that the decision is informed, recorded and owned, not that you agree with it."},
+    {t: "Accept it on their behalf so the POA&amp;M looks complete.", ok: false, fb: "Assessors don't accept risk. That breaks the independence everything else rests on."}
+  ]},
+  take: "Every POA&M line needs an owner, dated milestones and named closure evidence. Accepting a risk is a valid choice when someone with authority makes it, records it and sets a deadline.",
+  refs: [REF.poamEx, REF.fedramp, REF.oscal],
+  fx: {prof: {"ID.IM-01": "p"}, close: ["q10"]}
+},
+/* ---------------- S13 BOARD REPORT ---------------- */
+{
+  mod: "M9", life: 5, prof: 4, method: "—", depth: "—", coverage: "—", tier: "Current (judgment): Risk Informed (2) · Target: Repeatable (3)", cism: [1, 3],
+  title: "Answer the board in one page",
+  lead: {msg: "The committee asked one question. Answer it in the first sentence. Then give them three decisions, not thirty findings.", tag: "report"},
+  scene: `<p>Executive audiences need risk in business terms and a clear ask. The technical register goes in an appendix for management.</p>`,
+  evid: [{app: "Memo", title: "Audit & Risk Committee — CSF 2.0 alignment (one page)", pre:
+`<span class="b">ANSWER</span>  Partially aligned. Of 10 CSF 2.0 outcomes in agreed scope
+        (of 106 in the framework): 0 fully meet, 6 partial, 4 gaps.
+        Tier read (assessor judgment): Risk Informed (2);
+        target: Repeatable (3).
+<span class="b">MOST IMPORTANT</span>
+  1. Former contractors kept access to our network after leaving
+     (6 of 9 tested). Interim weekly check started; automated fix by
+     Nov 30. Whether this extends into a key vendor platform is
+     being tested.
+  2. About 1 in 10 devices on our networks isn't in the inventory,
+     so the vulnerability scanner never looks at it. Fix: one
+     reconciled inventory, and point the scanner at it, by Q1.
+  3. <span class="hi">No board-approved risk appetite exists</span> — so we cannot tell
+     you which risks are acceptable.
+<span class="b">DECISIONS ASKED</span>
+  A. Approve a risk appetite statement (draft attached).
+  B. Fund inventory + identity automation in the January budget.
+  C. Agree semi-annual reporting on 3 metrics (below).
+<span class="b">METRICS</span> contractor accounts disabled within the agreed window ·
+        inventory variance · POA&amp;M items past due
+<span class="b">LIMITS</span>  10 of 106 outcomes; evidence period Apr–Sep 2026. Not
+        assessed: Detect, Respond, Recover; Protect only via access
+        (PR.AA-05). Contract-clause fulfilment (GV.OC-03) not tested.
+        Independent consultant; populations from HR/procurement.
+<span class="c">— synthetic —</span>`}],
+  concept: {lbl: "Rolling cyber risk up to the enterprise", prov: "inf", html: `Paraphrased. NIST IR 8286 Rev. 1 and IR 8286C Rev. 1 (2025) address integrating cybersecurity risk into enterprise risk management, including rolling cyber risk information up to enterprise level for governance oversight. Read them for the method. <b>CA-7</b> (continuous monitoring) asks for organization-defined metrics, monitoring frequencies, and reporting of security status to organization-defined roles. It's written at <i>system</i> level, so using its structure for board metrics is an adaptation, not a requirement.`},
+  nist: {csf: ["GV.OV-01"], sp: ["ca-7"], hl: ["CA-07a.", "CA-07g.[01]"], showMethods: false},
+  four: {
+    cri: {t: "<b>GV.OV-01</b>: strategy outcomes reviewed to inform and adjust direction. <b>CA-07a / CA-07g.[01]</b>: metrics defined; status reported to defined roles at a defined frequency.", prov: "fw"},
+    /* pairing GV.OV-01 → CA-7 is a trainer selection */
+    src: {t: "Your findings register, the risk register and the POA&amp;M, compressed for this audience.", prov: "syn"},
+    suf: {t: "Each claim on the page traces to a finding and a workpaper. The <b>limits</b> line is mandatory: it stops \"partially aligned\" being read as covering more than you tested.", v: "ok", vt: "traceable", prov: "inf"},
+    ali: {t: "<b>GV.OV-01 → partial</b>, rated on TAC's existing oversight, not on this engagement. The committee minutes show a yearly cyber agenda item (synthetic), but no review of outcomes against strategy. Approving decision C makes that review recurring.", v: "more", vt: "partial", prov: "syn"}
+  },
+  owner: [{l: "CEO's request", t: "\"Can we lead with the positives?\" You can mention what works. You can't bury the answer. The committee asked about alignment; the first line answers that."}],
+  threat: {ctrl: "CA-07", note: "Continuous monitoring is where governance meets detection. CTID maps CA-7 to <b>T1078</b>, <b>T1562 Impair Defenses</b> and <b>T1567 Exfiltration Over Web Service</b>, among many others."},
+  bias: {name: "Audience softening", prov: "inf", trap: "Rounding \"4 gaps\" into \"some opportunities\" because it's the board.", ct: "Counter: plain words, a limits line, and decisions they can actually take. Softened language makes it harder for them to decide."},
+  dec: {q: "Which first sentence answers the committee's question?", opts: [
+    {t: "\"Our security program has matured significantly this year.\"", ok: false, fb: "That doesn't answer \"are we aligned?\" and nothing in your evidence supports it."},
+    {t: "\"Partially aligned: of the 10 outcomes we agreed to assess, none fully meets, 6 are partial and 4 are gaps. Three decisions would close the most important ones.\"", ok: true, fb: "Right. Answer, scope, then the ask. Everything else supports that sentence."},
+    {t: "\"We identified 5 findings across PR.AA-05, GV.PO-02, ID.AM-01…\"", ok: false, fb: "Subcategory IDs are for the appendix. The committee needs the answer and the decisions."}
+  ]},
+  take: "Lead with the answer, state what you tested and what you didn't, and give decisions the board can take. Put the technical detail in an appendix.",
+  refs: [REF.ir8286, REF.oscal, REF.csf],
+  fx: {prof: {"GV.OV-01": "p"}, close: ["q11"]}
+},
+/* ---------------- S14 DEBRIEF ---------------- */
+{
+  mod: "Debrief", life: 6, prof: 4, method: "—", depth: "—", coverage: "—", tier: "Current (judgment): Risk Informed (2) · Target: Repeatable (3)", cism: [1, 2, 3, 4],
+  title: "Debrief: the four questions, every time",
+  lead: {msg: "Same four questions on every engagement, whatever the framework. Say them back to me.", tag: "debrief"},
+  scene: `<table class="mini"><tr><th>Question</th><th>What answered it here</th></tr>
+<tr><td><b>What am I looking for?</b> (criteria)</td><td>The CSF outcome text plus the 800-53A objective labels, both verbatim from NIST, plus the target line agreed at S2.</td></tr>
+<tr><td><b>Where am I looking?</b> (source)</td><td>800-53A's own assessment objects for examine, interview and test. Populations come from systems of record, never from the control owner.</td></tr>
+<tr><td><b>How do I know it's what I need?</b> (sufficiency)</td><td>GAO: <i>sufficiency</i> = quantity; <i>appropriateness</i> = relevance, validity, reliability. NIST: depth and coverage. Corroborate testimony.</td></tr>
+<tr><td><b>How do I align it?</b> (alignment)</td><td>A finding with criteria, condition, cause and effect, then a risk rating against an appetite, then a POA&amp;M with owners, milestones and closure evidence, then the decision the board takes.</td></tr></table>
+<p><b>Bias watchlist from this case:</b> recency, scope drift, copy-paste targets, "it exists so it works," narrative capture, convenience sourcing, anchoring on the good stratum, population trust, metric comfort, halo effect, severity creep, closure optimism, audience softening. <b>Plus one threat that isn't a bias:</b> self-review. Rate the organization's own practices, never the work product you helped write.</p>
+<p><b>CISM (2026-11-03 outline):</b> this case leaned on D3 Program (testing, evaluation, external services), D2 Risk, and D1 Governance. D4 Incident Management appeared at the S6 escalation (plus the S7 unknown-device referral), which is the handoff to the <a href="https://github.com/grumby42/dfir-trainers">dfir-trainers</a> side.</p>
+<p><b>Next:</b> run the exercise generator, then fill in the workpaper log for one control at your own organization or lab (see <code>LAB.md</code>).</p>`,
+  nist: null,
+  four: null,
+  dec: null,
+  take: "Name the decision the work informs. Test against verbatim criteria. Source evidence independently. Write findings with all four elements. Tie risk to an appetite. Prove every closure.",
+  refs: [REF.csf, REF.a53, REF.gao, REF.cism]
+}
+];
+
+/* Workpaper example rows (synthetic) for the log */
+const LOG_EXAMPLE = [
+  {ctrl: "AC-2", csf: "PR.AA-05", req: "Accounts disabled per procedure; aligned with termination (AC-02f.[04], AC-02l.[01])", method: "T", depth: "focused", coverage: "basic + focused", objects: "HR separations (R05); procurement end-dates (R06); AD disable timestamps", role: "IT Ops Mgr", evref: "WP-AC2-01", period: "2026-04-01..2026-09-30", result: "exception", exception: "6/9 contractors late or still enabled; 0/11 employees", finding: "F-01", likelihood: "moderate", impact: "high", residual: "low", status: "open", rtype: "mitigate", owner: "IT Ops + Procurement", milestone: "2026-11-30 auto-disable feed", closure: "Retest contractor stratum: 0 exceptions"},
+  {ctrl: "CM-8", csf: "ID.AM-01", req: "Inventory includes all components (CM-08a.02)", method: "T", depth: "focused", coverage: "full reconcile", objects: "CMDB export; DHCP/NAC 30d", role: "Infra lead", evref: "WP-CM8-01", period: "2026-09", result: "exception", exception: "70 in-boundary devices not inventoried (9 personal phones → O-01)", finding: "F-03", likelihood: "moderate", impact: "moderate", residual: "low", status: "open", rtype: "mitigate", owner: "Infra", milestone: "2027-03-31 single reconciled inventory", closure: "Re-reconcile: variance under agreed tolerance"}
+];
+
+/* ===== APP ===== */
+const $ = id => document.getElementById(id);
+const esc = s => String(s == null ? "" : s).replace(/[&<>"']/g, c => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"}[c]));
+const PROV = {fw: ["fw", "framework text"], oc: ["oc", "outline / course"], inf: ["inf", "inference"], syn: ["syn", "synthetic"]};
+const prov = p => p && PROV[p] ? `<span class="prov ${PROV[p][0]}">${PROV[p][1]}</span>` : "";
+const shuffle = a => { const b = a.slice(); for (let k = b.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [b[k], b[j]] = [b[j], b[k]]; } return b; };
+const pick = a => a[Math.floor(Math.random() * a.length)];
+const ctrlByLabel = lab => Object.values(DATA.sp80053).find(c => c.id === lab);
+
+let i = 0, view = "assessor", prevMeters = null;
+
+/* ---------- NIST panel (verbatim from OSCAL) ---------- */
+function nistPanel(n) {
+  if (!n || (!n.csf.length && !n.sp.length)) return "";
+  const hl = new Set(n.hl || []);
+  const parts = [];
+  n.csf.forEach(id => {
+    const c = DATA.csf[id]; if (!c) return;
+    parts.push(`<div class="stmt"><span class="ol">${esc(id)}</span>${esc(c.text)}</div>`);
+    if (c.examples.length) parts.push(`<div class="mh">CSF 2.0 implementation examples (first 3 of ${c.examples.length})</div><ul>${c.examples.slice(0, 3).map(e => `<li>${esc(e)}</li>`).join("")}</ul>`);
+  });
+  n.sp.forEach(key => {
+    const c = DATA.sp80053[key]; if (!c) return;
+    parts.push(`<div class="mh" style="margin-top:14px">SP 800-53 Rev 5.2.0 — ${esc(c.id)} ${esc(c.title)} · control statement</div>`);
+    c.statement.forEach(s => parts.push(`<div class="stmt" style="padding-left:${s.depth * 10}px"><span class="ol">${esc(s.label)}</span>${esc(s.text)}</div>`));
+    const objs = c.objectives.filter(o => o.label && o.label !== c.id || c.objectives.length === 1);
+    parts.push(`<div class="mh">SP 800-53A assessment objectives — determine if…</div>`);
+    objs.forEach(o => parts.push(`<div class="obj ${hl.has(o.label) ? "hl" : ""}"><span class="ol">${esc(o.label)}</span>${esc(o.text)}</div>`));
+    if (n.showMethods) {
+      ["EXAMINE", "INTERVIEW", "TEST"].forEach(m => {
+        if (c.methods[m]) parts.push(`<div class="mh">${m} — assessment objects</div><ul>${c.methods[m].map(x => `<li>${esc(x)}</li>`).join("")}</ul>`);
+      });
+    }
+  });
+  const label = [...n.csf.map(x => "CSF " + x), ...n.sp.map(k => DATA.sp80053[k] ? DATA.sp80053[k].id : k)].join(" · ");
+  return `<details class="nist" ${n.open ? "open" : ""}><summary>NIST text — ${esc(label)} <span class="prov fw">verbatim · OSCAL</span></summary><div class="nb">${parts.join("")}<div class="refs" style="margin-top:10px">Source: NIST OSCAL content ${esc(DATA.provenance.oscal_content_commit)} — ${esc(DATA.provenance.sp80053_catalog)}; ${esc(DATA.provenance.csf_catalog)}. Highlighted = objectives this step tests. CSF ↔ 800-53 pairing is a trainer selection; verify against NIST OLIR #186.</div></div></details>`;
+}
+
+/* ---------- meters ---------- */
+function pips(n, cur) { let h = ""; for (let k = 0; k < n; k++) h += `<i class="${k < cur ? "on" : k === cur ? "cur" : ""}"></i>`; return `<div class="pips">${h}</div>`; }
+function renderMeters(t) {
+  const m = {
+    "Engagement lifecycle": [LIFE[t.life], pips(LIFE.length, t.life)],
+    "CSF Profile step": [PROFILE[t.prof], pips(PROFILE.length, t.prof)],
+    "Assessment method": [t.method, ""],
+    "Depth": [t.depth, ""],
+    "Coverage": [t.coverage, ""],
+    "Tier read": [t.tier, ""]
+  };
+  $("fwstrip").innerHTML = Object.entries(m).map(([k, v]) => {
+    const ch = prevMeters && prevMeters[k] !== v[0];
+    return `<div class="fw ${ch ? "changed" : ""}"><div class="k">${k}</div><div class="v">${esc(v[0])}</div>${v[1]}</div>`;
+  }).join("");
+  prevMeters = Object.fromEntries(Object.entries(m).map(([k, v]) => [k, v[0]]));
+}
+
+/* ---------- rail ---------- */
+function stateAt(idx) {
+  const prof = {}, open = new Set(), closed = new Set(), cism = new Set();
+  PROFILE_ROWS.forEach(r => prof[r] = "u");
+  for (let k = 0; k <= idx; k++) {
+    const fx = S[k].fx || {};
+    Object.assign(prof, fx.prof || {});
+    (fx.open || []).forEach(q => open.add(q));
+    (fx.close || []).forEach(q => { closed.add(q); open.add(q); });
+    (S[k].cism || []).forEach(d => cism.add(d));
+  }
+  return {prof, open, closed, cism};
+}
+function renderRail() {
+  const st = stateAt(i);
+  const lab = {u: ["u", "not assessed"], p: ["p", "partial"], g: ["g", "gap"], m: ["m", "meets"]};
+  $("profTbl").innerHTML = PROFILE_ROWS.map(r => {
+    const s = lab[st.prof[r]];
+    return `<tr><td class="id">${r}</td><td>${esc((DATA.csf[r] || {}).text || "").slice(0, 70)}…</td><td><span class="st ${s[0]}">${s[1]}</span></td></tr>`;
+  }).join("");
+  const shown = QS.filter(q => st.open.has(q.id));
+  $("qs").innerHTML = shown.length ? shown.map(q => `<li class="${st.closed.has(q.id) ? "closed" : ""}"><span>${st.closed.has(q.id) ? "✓" : "●"}</span><span>${esc(q.t)}</span></li>`).join("") : `<li>None yet. Intake first.</li>`;
+  const names = {1: "D1 Gov 18%", 2: "D2 Risk 20%", 3: "D3 Prog 33%", 4: "D4 IM 29%"};
+  $("cismbar").innerHTML = [1, 2, 3, 4].map(d => `<div class="${st.cism.has(d) ? "on" : ""}">${names[d]}</div>`).join("");
+}
+
+/* ---------- step body ---------- */
+function reasonPanel(f, n) {
+  if (!f) return "";
+  const paired = n && n.csf && n.sp && n.csf.length && n.sp.length;
+  const row = (cls, name, q, x, extra) => `<div class="rrow"><div class="lbl ${cls}">${name} <span style="text-transform:none;letter-spacing:0;font-weight:500;color:var(--faint)">— ${q}</span>${x.v ? `<span class="verdict ${x.v}">${esc(x.vt || "")}</span>` : ""}${prov(x.prov)}${extra || ""}</div><div class="txt">${x.t}</div></div>`;
+  const pairChip = paired ? `<span class="prov inf" title="The CSF outcome and 800-53 text are verbatim NIST; pairing them is a trainer selection. Verify at NIST OLIR #186.">pairing: inference</span>` : "";
+  return `<div class="reason"><div class="rh">Assessor reasoning — the four questions</div><div class="rb">
+    ${row("cri", "Criteria", "what am I looking for?", f.cri, pairChip)}
+    ${row("src", "Source", "where am I looking for it?", f.src)}
+    ${row("suf", "Sufficiency", "how do I know it's what I need?", f.suf)}
+    ${row("ali", "Alignment", "how do I make it conform?", f.ali)}
+  </div></div>`;
+}
+function ownerPanel(o) {
+  if (!o) return "";
+  return `<div class="ownpanel"><div class="ah">Control Owner view — plausible perspective, not a script ${prov("inf")}</div><div class="ab">${o.map(r => `<div class="arow"><div class="lbl">${esc(r.l)}</div><div class="txt">${r.t}</div></div>`).join("")}</div></div>`;
+}
+function threatPanel(th) {
+  if (!th) return "";
+  let body = `<div class="arow"><div class="lbl">Why it matters here ${prov("inf")}</div><div class="txt">${th.note}</div></div>`;
+  const a = th.ctrl && DATA.attack[th.ctrl];
+  if (a && a.sample.length) {
+    body += `<div class="arow"><div class="lbl">CTID: ${esc(th.ctrl)} is mapped as mitigating ${a.total_parent_techniques} parent ATT&amp;CK techniques (Enterprise v${esc(DATA.provenance.ctid_attack_version)}). A selection follows. <span class="prov fw">CTID · Apache-2.0</span></div><div class="txt">${a.sample.map(t => `<div style="margin:7px 0"><span class="tech">${esc(t.id)}</span> <b>${esc(t.name)}</b>${t.rationale ? `<div style="font-size:12px;color:var(--faint);margin-top:2px">CTID note: ${esc(t.rationale)}</div>` : ""}</div>`).join("")}<div style="font-size:11.5px;color:var(--faint);margin-top:6px">Why each pairing holds: CTID publishes the mapping; for most entries in this dataset, no per-entry rationale text is given. See the CTID Mappings Explorer for methodology.</div></div></div>`;
+  } else if (th.ctrl === null) {
+    body += `<div class="arow"><div class="lbl">CTID mapping</div><div class="txt">No control-to-technique mapping applies to this step. Governance controls (PM-9, CA-5, SR-6, AC-1) have no CTID technique mappings; they work <i>through</i> operational controls.</div></div>`;
+  }
+  return `<div class="thrpanel"><div class="ah">Threat lens — would this control interrupt real behavior?</div><div class="ab">${body}</div></div>`;
+}
+function gatePanel(g) {
+  if (!g) return "";
+  return `<div class="gate"><h4>Competing-explanations gate ${prov("inf")}</h4><div style="font-size:12.5px;margin-bottom:6px">${esc(g.q)}. Seek <i>disconfirming</i> evidence for each explanation.</div><table><tr><th>Explanation</th><th>Supports</th><th>Contradicts</th></tr>${g.rows.map(r => `<tr><td class="${r[3] ? "w" : ""}">${r[0]}${r[3] ? " ← best supported" : ""}</td><td>${r[1]}</td><td>${r[2]}</td></tr>`).join("")}</table></div>`;
+}
+function decisionPanel(d, si) {
+  if (!d) return "";
+  const opts = d.opts.map((o, k) => `<button class="opt" data-k="${k}" data-s="${si}">${o.t}<span class="mk"></span></button>`).join("");
+  return `<div class="decision"><div class="q">Decision: ${d.q}</div>${opts}<div class="fb" id="fb${si}"></div></div>`;
+}
+function render() {
+  const t = S[i];
+  $("prog").style.width = ((i + 1) / S.length * 100) + "%";
+  $("phase").innerHTML = `${esc(t.mod)} · ${esc(LIFE[t.life])}<span class="cism">CISM ${t.cism.map(d => "D" + d).join(" · ")}</span>`;
+  $("title").textContent = t.title;
+  let h = "";
+  if (t.lead) h += `<div class="lead"><div class="ava">${LEAD.init}</div><div><div class="who">${LEAD.name} <span class="role">· ${LEAD.role}</span><span class="tag">${esc(t.lead.tag)}</span>${prov("syn")}</div><div class="msg">${t.lead.msg}</div></div></div>`;
+  if (t.scene) h += `<div class="scene">${t.scene}</div>`;
+  if (t.concept) h += `<div class="newconcept"><div class="lbl">${esc(t.concept.lbl)} ${prov(t.concept.prov)}</div><div style="font-size:13.5px;margin-top:3px">${t.concept.html}</div></div>`;
+  if (t.evid) h += `<div class="workspace">${t.evid.map(e => `<div class="win"><div class="bar"><span class="app"><b>${esc(e.app)}</b> · ${esc(e.title)}</span>${prov("syn")}</div><pre>${e.pre}</pre></div>`).join("")}</div>`;
+  if (view === "assessor") h += reasonPanel(t.four, t.nist);
+  if (view === "owner") h += ownerPanel(t.owner) || "";
+  if (view === "threat") h += threatPanel(t.threat) || "";
+  h += nistPanel(t.nist);
+  h += gatePanel(t.gate);
+  if (t.bias) h += `<div class="bias"><h4>Bias check — ${esc(t.bias.name)} ${prov(t.bias.prov)}</h4><p>${t.bias.trap}</p><p class="ct">${t.bias.ct}</p></div>`;
+  h += decisionPanel(t.dec, i);
+  if (t.take) h += `<div class="take"><h4>Takeaway</h4><p>${t.take}</p></div>`;
+  if (t.refs && t.refs.length) h += `<div class="refs">Sources: ${t.refs.map(r => `<a href="${esc(r.u)}" target="_blank" rel="noopener">${esc(r.t)}</a>`).join(" · ")}</div>`;
+  $("body").innerHTML = h;
+  $("prev").disabled = i === 0;
+  $("next").disabled = i === S.length - 1;
+  $("stepNo").textContent = `${i + 1} / ${S.length} · ← → keys`;
+  renderMeters(t);
+  renderRail();
+}
+document.addEventListener("click", e => {
+  const b = e.target.closest(".opt[data-s]"); if (!b) return;
+  const si = +b.dataset.s, k = +b.dataset.k, d = S[si].dec, o = d.opts[k];
+  b.parentElement.querySelectorAll(".opt").forEach((x, kk) => { x.classList.remove("correct", "wrong"); if (d.opts[kk].ok) x.classList.add("correct"); x.querySelector(".mk").textContent = d.opts[kk].ok ? "✓" : ""; });
+  if (!o.ok) { b.classList.add("wrong"); b.querySelector(".mk").textContent = "✗"; }
+  const fb = $("fb" + si); fb.className = "fb show " + (o.ok ? "ok" : "no"); fb.innerHTML = o.fb;
+});
+$("prev").onclick = () => { if (i > 0) { i--; render(); window.scrollTo(0, 0); } };
+$("next").onclick = () => { if (i < S.length - 1) { i++; render(); window.scrollTo(0, 0); } };
+document.addEventListener("keydown", e => {
+  if ($("walkMode").classList.contains("hidden")) return;
+  if (["INPUT", "TEXTAREA", "SELECT"].includes(document.activeElement.tagName)) return;
+  if (e.key === "ArrowRight" && i < S.length - 1) { i++; render(); }
+  if (e.key === "ArrowLeft" && i > 0) { i--; render(); }
+});
+$("viewToggle").addEventListener("click", e => {
+  const b = e.target.closest("button"); if (!b) return;
+  view = b.dataset.view;
+  $("viewToggle").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+  render();
+});
+
+/* ---------- modes ---------- */
+document.querySelectorAll(".modebtn").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".modebtn").forEach(x => x.classList.toggle("on", x === b));
+  ["walk", "ex", "log", "about"].forEach(m => $(m + "Mode").classList.toggle("hidden", m !== b.dataset.mode));
+  if (b.dataset.mode === "ex" && !$("exHost").innerHTML) newRep();
+  if (b.dataset.mode === "about") renderAbout();
+});
+
+/* ===== EXERCISE GENERATOR =====
+   Data-driven reps draw their answer keys from NIST's OSCAL text (verbatim).
+   Authored reps are synthetic scenarios; their answers are practitioner inference. */
+
+const EX_AUTHORED = {
+  classify: {name: "Classify the ask", cism: [1], items: [
+    {q: "\"Our biggest customer sent a 200-question security questionnaire. Due Friday.\"", a: "Vendor review (we are the vendor)", d: ["Assurance", "Policy", "Risk decision"], fb: "You're the supplier being assessed. Answer from evidence, and don't promise controls you can't show."},
+    {q: "\"An auditor arrives in March for our first ISO 27001 certification. Are we going to pass?\"", a: "Readiness", d: ["Assurance", "Vendor review", "Policy"], fb: "This is preparing for an outside assessor: a gap analysis against the standard, then fixes, then an internal audit."},
+    {q: "\"Should we buy cyber insurance or spend the money on MFA everywhere?\"", a: "Risk decision", d: ["Assurance", "Readiness", "Policy"], fb: "It's a choice between treatments (transfer versus mitigate). Deliver options with risk reduction and cost."},
+    {q: "\"Can you confirm the quarterly access reviews actually happened last year?\"", a: "Assurance", d: ["Readiness", "Risk decision", "Policy"], fb: "It's a yes/no about whether something is true. Test it against evidence for the period."},
+    {q: "\"Legal says we need an AI acceptable-use rule before the rollout next month.\"", a: "Policy", d: ["Assurance", "Vendor review", "Readiness"], fb: "This is policy work: drafting, approval, communication, then the enforcement mechanism."},
+    {q: "\"The new CRM vendor wants admin access to our tenant. OK?\"", a: "Vendor review", d: ["Policy", "Assurance", "Readiness"], fb: "This is third-party risk, sized to the access being granted. Check their assurance, the contract terms, and the least-privilege alternative."}
+  ]},
+  suff: {name: "Sufficiency call", cism: [3], items: [
+    {q: "The control owner shows you one change ticket with an approval and says \"all changes are approved.\"", a: "Insufficient: testimony plus one owner-selected example", d: ["Sufficient: documented approval seen", "Sufficient if the ticket is recent"], fb: "One self-selected item can't support a claim about a whole population. Sample the change log yourself."},
+    {q: "You reperformed the quarterly access review for 2 of 4 quarters from system exports. Both match the signed reviews.", a: "Sufficient for those quarters; the conclusion covers only what was tested", d: ["Sufficient for the full year", "Insufficient: must test all 4"], fb: "Say exactly what the evidence covers. Extend coverage if the objective needs the whole year."},
+    {q: "The SOC 2 Type II report's period ended 14 months ago. There's no bridge letter.", a: "More needed: the newer report, plus a bridge letter only for any short gap after its period", d: ["Sufficient: the opinion was clean", "Sufficient once the vendor sends a bridge letter for the 14 months"], fb: "A clean opinion covers <i>that</i> period. A bridge letter is management's assertion, typically for a short gap of about three months or less (Linford &amp; Co, practitioner), so it can't stand in for 14 months of untested operation."},
+    {q: "The policy PDF says \"approved 2026-01\" and names an official. You haven't confirmed the approval anywhere else.", a: "Sufficient for the document conclusion, if the copy came from the controlled repository", d: ["Insufficient: need board minutes", "Sufficient for the operating conclusion too"], fb: "This is document-level evidence for document-level criteria. It says nothing about whether the policy is followed."},
+    {q: "A screenshot shows MFA enforced. It's undated, and the owner sent it.", a: "Weak: not reliable on its own. Observe it live, or get a dated config export.", d: ["Sufficient: it shows the setting", "Sufficient if the owner signs it"], fb: "GAO's appropriateness test includes reliability. Undated, owner-provided images are easy to stage and hard to place in time."},
+    {q: "You reconciled the full CMDB against 30 days of NAC records and found 3% unknown devices.", a: "Sufficient to conclude on completeness at this depth", d: ["Insufficient: need 90 days", "Insufficient: must physically find every device"], fb: "A full reconciliation against an independent source supports a completeness conclusion. Record the observation window as a limit."}
+  ]},
+  explain: {name: "Competing explanations", cism: [2, 3], items: [
+    {q: "Terminated employees are disabled on time, but terminated contractors aren't. No contractor procedure exists.", a: "Design gap", d: ["Operating failure", "Evidence gap", "Scope mismatch"], fb: "No process covers that population. People can't follow what doesn't exist."},
+    {q: "The procedure is approved and clear. In 3 of 25 samples, the approver skipped the approval step.", a: "Operating failure", d: ["Design gap", "Evidence gap", "Scope mismatch"], fb: "The design exists and isn't always followed. Look for a cause: workload, tooling, training."},
+    {q: "Patches show as missing in the report, but the hosts show them installed. The scanner's credentials expired.", a: "Evidence gap", d: ["Operating failure", "Design gap", "Scope mismatch"], fb: "The control may be fine. The evidence source is broken, so fix the evidence before you write the finding."},
+    {q: "The test failed on dev servers. The agreed scope was production only.", a: "Scope mismatch", d: ["Operating failure", "Design gap", "Evidence gap"], fb: "You tested outside the criteria you agreed. Re-test in scope, and optionally note the observation."},
+    {q: "The standard requires quarterly restore tests. The backup procedure has no restore-test step, no one is assigned to it, and none has ever been done.", a: "Design gap", d: ["Operating failure", "Evidence gap", "Scope mismatch"], fb: "The required activity was never built into the process. If the procedure included it and people skipped it, that would be an operating failure."},
+    {q: "Logs show no reviews in July. The reviewer says they did them on paper, which was then shredded.", a: "Evidence gap", d: ["Operating failure", "Design gap", "Scope mismatch"], fb: "It's an evidence gap that may hide an operating failure. Without retained evidence the review can't be relied on. Recommend retention."}
+  ]},
+  elements: {name: "Finding elements (GAO)", cism: [2], items: [
+    {q: "\"The policy requires quarterly access reviews for privileged accounts.\"", a: "Criteria", d: ["Condition", "Cause", "Effect"], fb: "The required or desired state."},
+    {q: "\"No privileged access reviews were performed in Q2 or Q3 2026.\"", a: "Condition", d: ["Criteria", "Cause", "Effect"], fb: "A situation that exists, determined during the engagement."},
+    {q: "\"The review task was assigned to a role that was vacant from April to October.\"", a: "Cause", d: ["Condition", "Criteria", "Effect"], fb: "Why condition and criteria differ. The recommendation should target this."},
+    {q: "\"As a result, unauthorized changes to production systems by former administrators could have gone undetected.\"", a: "Effect", d: ["Cause", "Condition", "Criteria"], fb: "GAO's effect, or potential effect: the outcome or consequence of the difference between condition and criteria. (\"Two former admins kept rights for five months\" would be the <i>condition</i>, which is the observed situation.)"},
+    {q: "\"Contract clause 12.4 requires notification within 72 hours.\"", a: "Criteria", d: ["Effect", "Condition", "Cause"], fb: "Contracts are among GAO's listed sources of criteria."},
+    {q: "\"No owner was assigned when the monitoring tool was migrated.\"", a: "Cause", d: ["Effect", "Criteria", "Condition"], fb: "This explains the gap, so fix it at the cause."}
+  ]},
+  bias: {name: "Spot the bias", cism: [3], items: [
+    {q: "\"The last audit was clean, so I'll test less this year.\"", a: "Anchoring on prior results", d: ["Halo effect", "Availability"], fb: "Conditions change. Set depth from current risk and changes, not last year's result."},
+    {q: "\"They're a big-name vendor; their security is obviously fine.\"", a: "Halo effect", d: ["Anchoring on prior results", "Closure optimism"], fb: "Read their assurance scope, period, carve-outs and CUECs."},
+    {q: "\"After that ransomware story, everything is rated High.\"", a: "Availability", d: ["Halo effect", "Metric comfort"], fb: "Rate from your observed conditions and an agreed scale."},
+    {q: "\"Scanning shows 100%, so coverage is good.\"", a: "Metric comfort", d: ["Availability", "Narrative capture"], fb: "100% of what? Check the denominator against an independent inventory."},
+    {q: "\"The owner was so confident I didn't think a test was needed.\"", a: "Narrative capture", d: ["Metric comfort", "Anchoring on prior results"], fb: "Confidence isn't evidence. Corroborate with examine or test."},
+    {q: "\"Status says closed, so the finding is remediated.\"", a: "Closure optimism", d: ["Halo effect", "Availability"], fb: "Closure needs evidence, ideally a retest."}
+  ]},
+  coverage: {name: "Coverage call (NIST terms)", cism: [3], items: [
+    {q: "A routine control with one uniform population and no red flags. You want a representative look.", a: "Basic sample", d: ["Focused sample", "Sufficiently large sample"], fb: "NIST: a basic sample is representative."},
+    {q: "Employees pass, but the interview showed contractors go through a different, untracked path.", a: "Focused sample", d: ["Basic sample", "Sufficiently large sample"], fb: "A focused sample extends the basic one to include other important objects, here the contractor stratum."},
+    {q: "Prior exceptions, high impact, and the board will rely on your conclusion for a funding decision.", a: "Sufficiently large sample", d: ["Basic sample", "Focused sample"], fb: "This extends the focused sample further for higher assurance. Document why."},
+    {q: "You're testing a list's completeness (is anything missing?).", a: "Full reconciliation against an independent source", d: ["Basic sample", "Focused sample"], fb: "No sample drawn from a list can show what's missing from it. Compare the whole list against another view. Note that a census is outside NIST's three sample terms; it's your coverage choice, and yours to justify."}
+  ]},
+  board: {name: "Translate for the board", cism: [1], items: [
+    {q: "Finding: AC-2 contractor stratum, 6/9 exceptions, AC-02f.[04] not met.", a: "\"Former contractors keep access after they leave. We've started a weekly check, and an automated fix lands by Nov 30.\"", d: ["\"AC-2 has a 67% exception rate in a focused sample.\"", "\"Minor IAM hygiene issues were noted.\""], fb: "Business consequence, interim action, date. Control IDs belong in the appendix."},
+    {q: "No risk appetite statement exists.", a: "\"We can't tell you which risks are acceptable, because the board hasn't set an appetite. Here's a draft to approve.\"", d: ["\"GV.RM-02 is a gap.\"", "\"Risk is generally well managed.\""], fb: "Turn the gap into a decision the board can take."},
+    {q: "Inventory variance 12%; the scanner is fed from the inventory.", a: "\"About 1 in 8 devices on our networks isn't in the inventory, so the scanner never looks at it. Completing the inventory, and pointing the scanner at it, fixes both.\"", d: ["\"CM-8 objective CM-08a.02 is unmet.\"", "\"Asset management needs attention.\""], fb: "Quantified, plain-language, and linked to its consequence."}
+  ]},
+  poam: {name: "POA&M line check", cism: [2, 3], items: [
+    {q: "\"Fix contractor offboarding — IT — ASAP.\"", a: "Missing dated milestones and closure evidence", d: ["Complete", "Missing only a risk rating"], fb: "\"ASAP\" is not a milestone. Add dated tasks and state what proves closure."},
+    {q: "\"R-3 accepted by CFO, 2026-10-30, until 2027-06-30, rationale attached, revisit when appetite approved.\"", a: "Complete for an acceptance", d: ["Invalid: risks can't be accepted", "Missing a mitigation plan"], fb: "Acceptance is a legitimate remediation type (NIST's OSCAL POA&amp;M example includes one) when it's authorized, dated and reasoned."},
+    {q: "\"Inventory fix — Infra lead — M1 2026-12-01, M2 2027-03-31 — closure: status set to Closed.\"", a: "Weak closure criterion", d: ["Complete", "Missing owner"], fb: "Closure evidence should be an artifact, for example a re-reconciliation under the agreed variance. A status change isn't evidence."},
+    {q: "\"Scanner scope — Security Eng — M1 2026-11-15 import MDM device list — closure: next scan's target list contains every device in the reconciled inventory.\"", a: "Complete", d: ["Missing owner", "Missing milestones"], fb: "It has an owner, a dated milestone, and a closure test on set membership (targets ∩ inventory = inventory), not a count. A count can match while the wrong devices are scanned."},
+    {q: "\"Scanner scope — Security Eng — M1 2026-11-15 — closure: next scan target count ≥ inventory count.\"", a: "Weak closure criterion", d: ["Complete", "Missing owner"], fb: "Count parity is the \"100% of what?\" trap. Matching totals can hide missing devices. Test membership, not counts."}
+  ]}
+};
+
+const EX_TYPES = [
+  {id: "method", name: "Which 800-53A method lists this object?", data: true, cism: [3]},
+  {id: "where", name: "Where would you look? (examine objects)", data: true, cism: [3]},
+  {id: "outcome", name: "Name the CSF 2.0 outcome", data: true, cism: [1, 2]},
+  {id: "objective", name: "Which control does this objective test?", data: true, cism: [3]},
+  ...Object.entries(EX_AUTHORED).map(([id, v]) => ({id, name: v.name, data: false, cism: v.cism})),
+  {id: "mixed", name: "Mixed — all types", data: true, cism: [1, 2, 3]}
+];
+
+let exRight = 0, exTotal = 0;
+
+function dataRep(type) {
+  const ctrls = Object.values(DATA.sp80053);
+  if (type === "method") {
+    for (let tries = 0; tries < 50; tries++) {
+      const c = pick(ctrls), ms = Object.keys(c.methods).filter(m => c.methods[m].length);
+      if (!ms.length) continue;
+      const m = pick(ms), obj = pick(c.methods[m]);
+      if (ms.filter(x => c.methods[x].includes(obj)).length > 1) continue;
+      return {q: `For <b>${esc(c.id)} ${esc(c.title)}</b>, NIST 800-53A lists this assessment object under which method?<br><i>"${esc(obj)}"</i>`, a: m, d: ["EXAMINE", "INTERVIEW", "TEST"].filter(x => x !== m), fb: `800-53A lists it under ${m} for ${esc(c.id)}. Examine applies to documents, activities and mechanisms; interview to people; test to mechanisms and activities.`, prov: "fw"};
+    }
+  }
+  if (type === "where") {
+    const withEx = ctrls.filter(c => (c.methods.EXAMINE || []).length >= 3);
+    const c = pick(withEx), others = shuffle(withEx.filter(x => x !== c)).slice(0, 2);
+    const obj = pick(c.objectives.filter(o => o.label && o.label !== c.id).concat(c.objectives.length === 1 ? c.objectives : []));
+    const show = x => x.methods.EXAMINE.slice(0, 3).join("; ");
+    return {q: `Objective <b>${esc(obj.label)}</b>: "${esc(obj.text)}"<br>Which set of documents does 800-53A point you to?`, a: show(c), d: others.map(show), fb: `These are the first examine objects NIST lists for ${esc(c.id)} ${esc(c.title)}.`, prov: "fw"};
+  }
+  if (type === "outcome") {
+    const ids = Object.keys(DATA.csf), id = pick(ids);
+    return {q: `Which CSF 2.0 subcategory says:<br><i>"${esc(DATA.csf[id].text)}"</i>`, a: id, d: shuffle(ids.filter(x => x !== id)).slice(0, 3), fb: `${id}, verbatim from the CSF 2.0 core.`, prov: "fw"};
+  }
+  if (type === "objective") {
+    const c = pick(ctrls), obj = pick(c.objectives.filter(o => o.label && o.label !== c.id).concat(c.objectives.length === 1 ? c.objectives : []));
+    const lab = x => `${x.id} ${x.title}`;
+    return {q: `Determine if: <i>"${esc(obj.text)}"</i><br>Which SP 800-53 control is this objective from?`, a: lab(c), d: shuffle(ctrls.filter(x => x !== c)).slice(0, 3).map(lab), fb: `It's ${esc(obj.label)}, under ${esc(lab(c))}.`, prov: "fw"};
+  }
+}
+
+function newRep() {
+  let type = $("exType").value || "mixed";
+  if (type === "mixed") type = pick(EX_TYPES.filter(t => t.id !== "mixed")).id;
+  const meta = EX_TYPES.find(t => t.id === type);
+  let item;
+  if (meta.data) item = dataRep(type);
+  else { const it = pick(EX_AUTHORED[type].items); item = Object.assign({prov: "inf"}, it); }
+  const opts = shuffle([{t: item.a, ok: true}, ...item.d.map(t => ({t, ok: false}))]);
+  $("exHost").innerHTML = `<div class="card"><div class="phase">${esc(meta.name)} <span class="cism" style="color:var(--purple)">CISM ${meta.cism.map(d => "D" + d).join(" · ")}</span> ${prov(item.prov)}${meta.data ? "" : prov("syn")}</div>
+    <div style="margin:8px 0 10px;font-size:14px">${item.q}</div>
+    ${opts.map((o, k) => `<button class="opt" data-ex="${k}">${esc(o.t)}<span class="mk"></span></button>`).join("")}
+    <div class="fb" id="exFb"></div></div>`;
+  $("exHost").querySelectorAll(".opt").forEach((b, k) => b.onclick = () => {
+    if ($("exFb").classList.contains("show")) return;
+    exTotal++; if (opts[k].ok) exRight++;
+    $("exHost").querySelectorAll(".opt").forEach((x, kk) => { if (opts[kk].ok) { x.classList.add("correct"); x.querySelector(".mk").textContent = "✓"; } });
+    if (!opts[k].ok) { b.classList.add("wrong"); b.querySelector(".mk").textContent = "✗"; }
+    $("exFb").className = "fb show " + (opts[k].ok ? "ok" : "no");
+    $("exFb").innerHTML = item.fb;
+    $("exScore").textContent = `${exRight}/${exTotal} this session`;
+  });
+}
+$("exType").innerHTML = EX_TYPES.map(t => `<option value="${t.id}" ${t.id === "mixed" ? "selected" : ""}>${esc(t.name)}${t.data ? " · NIST data" : ""}</option>`).join("");
+$("exNew").onclick = newRep;
+$("exType").onchange = newRep;
+
+/* ===== WORKPAPER LOG =====
+   Fixed schema; the risk/remediation fields follow NIST's OSCAL POA&M model
+   (likelihood/impact facets, status, remediation type, milestone tasks). */
+
+const LOG_FIELDS = [
+  {id: "ctrl", l: "Control ID (800-53 / other)", ph: "AC-2"},
+  {id: "csf", l: "CSF 2.0 outcome", ph: "PR.AA-05", list: () => Object.keys(DATA.csf)},
+  {id: "req", l: "Requirement / objective labels tested", ph: "AC-02f.[04], AC-02l.[01]", full: true},
+  {id: "method", l: "Method", opts: ["E", "I", "T", "E+I", "E+T", "I+T", "E+I+T"]},
+  {id: "depth", l: "Depth", opts: ["basic", "focused", "comprehensive"]},
+  {id: "coverage", l: "Coverage", opts: ["basic", "focused", "sufficiently large", "basic + focused", "full reconcile"]},
+  {id: "objects", l: "Assessment objects / populations", ph: "HR separations; AD export", full: true},
+  {id: "role", l: "Interviewee role (no names in shared logs)", ph: "IT Ops Mgr"},
+  {id: "evref", l: "Evidence / workpaper ref", ph: "WP-AC2-01"},
+  {id: "period", l: "Evidence period", ph: "2026-04-01..2026-09-30"},
+  {id: "result", l: "Result", opts: ["meets", "exception", "not tested", "n/a"]},
+  {id: "exception", l: "Exception detail (condition)", ph: "6/9 contractor stratum", full: true},
+  {id: "finding", l: "Finding ID", ph: "F-01"},
+  {id: "likelihood", l: "Current likelihood (as observed; org scale)", opts: ["", "low", "moderate", "high"]},
+  {id: "impact", l: "Current impact (org scale)", opts: ["", "low", "moderate", "high"]},
+  {id: "residual", l: "Target residual rating (after remediation)", opts: ["", "low", "moderate", "high"]},
+  {id: "status", l: "Risk status", opts: ["", "open", "investigating", "remediating", "deviation-requested", "deviation-approved", "closed"]},
+  {id: "rtype", l: "Remediation type (OSCAL)", opts: ["", "mitigate", "accept", "transfer", "avoid", "share", "contingency"]},
+  {id: "owner", l: "Remediation owner (role)", ph: "IT Ops + Procurement"},
+  {id: "milestone", l: "Next milestone (date + task)", ph: "2026-11-30 auto-disable feed"},
+  {id: "closure", l: "Closure evidence required", ph: "Retest: 0 exceptions", full: true}
+];
+let LOG = [];
+try { LOG = JSON.parse(localStorage.getItem("grct-csf-log") || "[]"); } catch (e) { LOG = []; }
+const saveLog = () => { try { localStorage.setItem("grct-csf-log", JSON.stringify(LOG)); } catch (e) { /* storage unavailable: in-memory only */ } };
+
+function renderLogForm() {
+  $("logForm").innerHTML = LOG_FIELDS.map(f => {
+    let ctl;
+    if (f.opts) ctl = `<select id="f_${f.id}">${f.opts.map(o => `<option>${esc(o)}</option>`).join("")}</select>`;
+    else ctl = `<input id="f_${f.id}" placeholder="${esc(f.ph || "")}" ${f.list ? `list="dl_${f.id}"` : ""}>${f.list ? `<datalist id="dl_${f.id}">${f.list().map(o => `<option value="${esc(o)}">`).join("")}</datalist>` : ""}`;
+    return `<div class="${f.full ? "full" : ""}"><label for="f_${f.id}">${esc(f.l)}</label>${ctl}</div>`;
+  }).join("");
+}
+function renderLogTable() {
+  const host = $("logTableHost");
+  if (!LOG.length) { host.innerHTML = `<div class="emptyrow">No rows yet. Add one above, or load the walkthrough example.</div>`; return; }
+  const cols = ["ctrl", "csf", "method", "depth", "coverage", "result", "finding", "likelihood", "impact", "status", "rtype", "milestone"];
+  host.innerHTML = `<table class="tbl"><tr>${cols.map(c => `<th>${esc(c)}</th>`).join("")}<th></th></tr>${LOG.map((r, k) => `<tr>${cols.map(c => `<td>${esc(r[c])}</td>`).join("")}<td><button class="btn sm ghost" data-del="${k}">✕</button></td></tr>`).join("")}</table>`;
+  host.querySelectorAll("[data-del]").forEach(b => b.onclick = () => { LOG.splice(+b.dataset.del, 1); saveLog(); renderLogTable(); });
+}
+function download(name, text, type) {
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(new Blob([text], {type}));
+  a.download = name; document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 0);
+}
+$("logAdd").onclick = () => {
+  const r = {}; LOG_FIELDS.forEach(f => r[f.id] = $("f_" + f.id).value.trim());
+  if (!r.ctrl) { $("f_ctrl").focus(); return; }
+  LOG.push(r); saveLog(); renderLogTable();
+};
+$("logExample").onclick = () => { LOG = LOG.concat(JSON.parse(JSON.stringify(LOG_EXAMPLE))); saveLog(); renderLogTable(); };
+$("logClear").onclick = () => { if (confirm("Clear all workpaper rows?")) { LOG = []; saveLog(); renderLogTable(); } };
+$("logJson").onclick = () => download("workpapers.json", JSON.stringify({schema: "grct-workpaper-v1", build: BUILD_ID, exported_utc: new Date().toISOString(), rows: LOG}, null, 2), "application/json");
+$("logTsv").onclick = () => {
+  const clean = v => String(v || "").replace(/[\t\r\n]+/g, " ");
+  const rows = [LOG_FIELDS.map(f => f.id).join("\t"), ...LOG.map(r => LOG_FIELDS.map(f => clean(r[f.id])).join("\t"))];
+  download("workpapers.tsv", rows.join("\n"), "text/tab-separated-values");
+};
+
+/* ===== ABOUT ===== */
+function renderAbout() {
+  const p = DATA.provenance;
+  $("aboutHost").innerHTML = `
+  <h2 style="margin-top:0">About this trainer</h2>
+  <p><b>Credits first.</b> The framework and assessment content belongs to the people who wrote it: <b>NIST</b> (CSF 2.0; SP 800-53 Rev 5.2.0 and SP 800-53A, published as OSCAL by the NIST OSCAL team), <b>the U.S. GAO</b> (Yellow Book definitions of the elements of a finding and of evidence), and <b>MITRE's Center for Threat-Informed Defense</b> (Mappings Explorer, 800-53 ↔ ATT&amp;CK). Practitioner sources are linked, not reproduced: ISACA Journal, IIA, Linford &amp; Co, Bitsight, AICPA.</p>
+  <p><b>Not affiliated with, sponsored by, or endorsed by</b> NIST, GAO, MITRE, ISACA, ISC2, IIA, AICPA, Linford &amp; Co, Bitsight, or any organization named here. <b>${esc(ORG)}</b> and everyone in it are fictional. Every document, account, number and conversation is synthetic. This is training, not audit or legal advice.</p>
+  <h3>Embedded data (license-compatible, baked in at build time; nothing fetched at runtime)</h3>
+  <table class="mini">
+    <tr><th>Source</th><th>Version / commit</th><th>License</th></tr>
+    <tr><td>${esc(p.sp80053_catalog)}</td><td>oscal-content ${esc(p.oscal_content_commit)}</td><td>${esc(p.oscal_license)}</td></tr>
+    <tr><td>${esc(p.csf_catalog)}</td><td>oscal-content ${esc(p.oscal_content_commit)}</td><td>${esc(p.oscal_license)}</td></tr>
+    <tr><td>CTID Mappings Explorer — 800-53 Rev 5 ↔ ATT&amp;CK ${esc(p.ctid_attack_version)} enterprise (last update ${esc(p.ctid_last_update)})</td><td>mappings-explorer ${esc(p.ctid_commit)}</td><td>${esc(p.ctid_license)}</td></tr>
+    <tr><td>GAO Yellow Book glossary definitions (quoted)</td><td>gaoinnovations.gov glossary</td><td>U.S. Government work, not subject to U.S. copyright</td></tr>
+  </table>
+  <h3>What is <i>not</i> verified here</h3>
+  <ul style="font-size:13.5px">
+    <li><b>CSF 2.0 ↔ 800-53 pairings</b> are trainer selections. NIST's official mapping (OLIR #186) wasn't reachable from the build environment. Verify each pairing at <a href="https://csrc.nist.gov/projects/olir/informative-reference-catalog/details?referenceId=186#/" target="_blank" rel="noopener">OLIR #186</a>.</li>
+    <li><b>Sample sizes</b> in the case are this engagement's choice. NIST defines coverage levels, not counts.</li>
+    <li><b>SOC 2 reading guidance</b> comes from practitioner sources. AICPA DC 200, the primary source, needs a free account and wasn't read for this build.</li>
+    <li><b>CISM tags</b> use the outline effective 2026-11-03, verified at domain level (weights 18/20/33/29). Subtopic placement is pending ISACA publishing the detailed outline.</li>
+  </ul>
+  <h3>Build</h3>
+  <div class="stamp">BUILD_ID ${esc(BUILD_ID)}<br>STAMP_UTC ${esc(STAMP_UTC)}<br>Spec: grc-trainers/TRAINER_SPEC.md · License: MIT (trainer code and original content). Third-party notices: THIRD_PARTY_NOTICES.md</div>`;
+}
+
+/* ===== BOOT ===== */
+$("stampBox").innerHTML = `${esc(BUILD_ID)}<br>${esc(STAMP_UTC)}<br>NIST OSCAL ${esc(DATA.provenance.oscal_content_commit)}<br>CTID ${esc(DATA.provenance.ctid_commit)}`;
+renderLogForm(); renderLogTable(); render();
+
+</script>
+</body>
+</html>

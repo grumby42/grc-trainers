@@ -1,0 +1,8 @@
+# build intermediates
+data.json
+_script_check.js
+__pycache__/
+# lab outputs (synthetic, regenerable)
+labdata/
+answer_key.json
+.DS_Store
